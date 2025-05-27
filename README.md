@@ -66,6 +66,8 @@ Must include `id`, `mood` (array), `arabic`, and `english`. Other fields optiona
 }
 ```
 
+> id: Preferred format is surah_ayah (e.g., "2_152" for Surah 2, Ayah 152).
+
 **Responses:**
 
 * `201 Created`
