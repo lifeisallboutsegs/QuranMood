@@ -1,11 +1,15 @@
 [
   {
     "id": "94_6",
+<<<<<<< HEAD
     "mood": [
       "happy",
       "comfort",
       "hope"
     ],
+=======
+    "mood": ["struggling", "hopeless", "anxious", "overwhelmed", "comfort"],
+>>>>>>> 2d36c38e93c47ccd93020213cf4a681c088e96c5
     "arabic": "إِنَّ مَعَ الْعُسْرِ يُسْرًا",
     "english": "Indeed, with hardship [will be] ease.",
     "reference": {
