@@ -1,7 +1,11 @@
 [
   {
     "id": "94_6",
-    "mood": ["happy", "comfort", "hope"],
+    "mood": [
+      "happy",
+      "comfort",
+      "hope"
+    ],
     "arabic": "إِنَّ مَعَ الْعُسْرِ يُسْرًا",
     "english": "Indeed, with hardship [will be] ease.",
     "reference": {
@@ -10,7 +14,11 @@
       "text": "Al-Inshirah (The Relief)"
     },
     "source": "https://quran.com/94/6",
-    "tags": ["ease", "patience", "encouragement"],
+    "tags": [
+      "ease",
+      "patience",
+      "encouragement"
+    ],
     "translation_info": {
       "translator": "Saheeh International",
       "language": "en"
@@ -18,7 +26,10 @@
   },
   {
     "id": "54_11",
-    "mood": ["sad", "reflection"],
+    "mood": [
+      "sad",
+      "reflection"
+    ],
     "arabic": "وَفَجَّرْنَا الْأَرْضَ عُيُونًا فَالْتَقَى الْمَاءُ عَلَىٰ مَا أَنشَأَ",
     "english": "And We caused springs to gush forth, so the waters met for a matter already predestined.",
     "reference": {
@@ -27,7 +38,11 @@
       "text": "Al-Qamar (The Moon)"
     },
     "source": "https://quran.com/54/11",
-    "tags": ["miracle", "nature", "destiny"],
+    "tags": [
+      "miracle",
+      "nature",
+      "destiny"
+    ],
     "translation_info": {
       "translator": "Saheeh International",
       "language": "en"
@@ -35,7 +50,10 @@
   },
   {
     "id": "2_216",
-    "mood": ["hopeful", "patience"],
+    "mood": [
+      "hopeful",
+      "patience"
+    ],
     "arabic": "وَعَسَىٰ أَن تَكْرَهُوا شَيْئًا وَهُوَ خَيْرٌ لَّكُمْ",
     "english": "But perhaps you hate a thing and it is good for you.",
     "reference": {
@@ -44,7 +62,11 @@
       "text": "Al-Baqarah (The Cow)"
     },
     "source": "https://quran.com/2/216",
-    "tags": ["wisdom", "hope", "trust"],
+    "tags": [
+      "wisdom",
+      "hope",
+      "trust"
+    ],
     "translation_info": {
       "translator": "Saheeh International",
       "language": "en"
@@ -52,7 +74,10 @@
   },
   {
     "id": "2_152",
-    "mood": ["grateful", "remembrance"],
+    "mood": [
+      "grateful",
+      "remembrance"
+    ],
     "arabic": "فَاذْكُرُونِي أَذْكُرْكُمْ وَاشْكُرُوا لِي وَلَا تَكْفُرُونِ",
     "english": "So remember Me; I will remember you. And be grateful to Me and do not deny Me.",
     "reference": {
@@ -61,10 +86,49 @@
       "text": "Al-Baqarah (The Cow)"
     },
     "source": "https://quran.com/2/152",
-    "tags": ["gratitude", "remembrance", "faith"],
+    "tags": [
+      "gratitude",
+      "remembrance",
+      "faith"
+    ],
     "translation_info": {
       "translator": "Saheeh International",
       "language": "en"
     }
+  },
+  {
+    "id": "42_19",
+    "mood": [
+      "hope",
+      "comfort",
+      "reassurance",
+      "gratitude",
+      "trust"
+    ],
+    "arabic": "ٱللَّهُ لَطِيفٌۢ بِعِبَادِهِۦ يَرْزُقُ مَن يَشَآءُ ۖ وَهُوَ ٱلْقَوِىُّ ٱلْعَزِيزُ ١٩",
+    "english": "Allah is Ever Kind to His servants. He provides ˹abundantly˺ to whoever He wills. And He is the All-Powerful, Almighty.",
+    "bangla": "আল্লাহ তা‘আলা তাঁর বান্দাদের প্রতি দয়াশীল; তিনি যাকে চান রিযিক দান করেন। তিনি প্রবল, পরাক্রমশালী।",
+    "reference": {
+      "surah": 42,
+      "ayah": 19,
+      "text": "Ash-Shuraa"
+    },
+    "source": "https://quran.com/42/19",
+    "tags": [
+      "divine provision",
+      "kindness",
+      "mercy",
+      "Allah's attributes",
+      "omnipotence",
+      "faith",
+      "tawakkul (reliance on God)"
+    ],
+    "context": "This verse highlights Allah's kindness and provision for His servants. It reminds believers that sustenance comes from Allah and that He is powerful and able to provide for all.",
+    "translation_info": {
+      "english_translator": "From source",
+      "bangla_translator": "Gemini AI",
+      "language": "multi"
+    },
+    "created_at": "2025-05-27T14:35:26.501Z"
   }
 ]
