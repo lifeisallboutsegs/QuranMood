@@ -15,7 +15,15 @@
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
+      "src": "/api/verse/(.*)",
+      "dest": "Backend/index.js"
+    },
+    {
+      "src": "/api/interactions/(.*)",
+      "dest": "Backend/index.js"
+    },
+    {
+      "src": "/api/contact/(.*)",
       "dest": "Backend/index.js"
     },
     {
