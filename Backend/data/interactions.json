@@ -1,0 +1,50 @@
+{
+  "likes": [
+    {
+      "verseId": "42_19",
+      "userId": "user_2amfd2kzi",
+      "userName": "Isai Ivanov",
+      "createdAt": "2025-05-28T11:54:20.833Z"
+    },
+    {
+      "verseId": "94_6",
+      "userId": "user_3c62o2cu9",
+      "userName": "Isai Ivanov",
+      "createdAt": "2025-05-28T12:15:28.948Z"
+    }
+  ],
+  "comments": [
+    {
+      "id": "1748432356410",
+      "verseId": "94_6",
+      "userId": "user_2amfd2kzi",
+      "userName": "Isai Ivanov",
+      "content": "yeee",
+      "createdAt": "2025-05-28T11:39:16.410Z"
+    },
+    {
+      "id": "1748433273502",
+      "verseId": "42_19",
+      "userId": "user_2amfd2kzi",
+      "userName": "Isai Ivanov",
+      "content": "Mashallah",
+      "createdAt": "2025-05-28T11:54:33.502Z"
+    },
+    {
+      "id": "1748436272704",
+      "verseId": "94_6",
+      "userId": "user_3c62o2cu9",
+      "userName": "Isai Ivanov",
+      "content": "huh no state management?",
+      "createdAt": "2025-05-28T12:44:32.704Z"
+    },
+    {
+      "id": "1748447685072",
+      "verseId": "42_19",
+      "userId": "user_3c62o2cu9",
+      "userName": "Isai Ivanov",
+      "content": "Alhumdulillah",
+      "createdAt": "2025-05-28T15:54:45.072Z"
+    }
+  ]
+}
