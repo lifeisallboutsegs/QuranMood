@@ -1,6 +1,7 @@
 [
   {
     "id": "94_6",
+<<<<<<< HEAD
     "mood": [
       "struggling",
       "hopeless",
@@ -8,6 +9,13 @@
       "overwhelmed",
       "comfort"
     ],
+=======
+
+    "mood": ["happy", "comfort", "hope"],
+
+    "mood": ["struggling", "hopeless", "anxious", "overwhelmed", "comfort"],
+
+>>>>>>> b6f3e98f09a7758e18f56347718c8ca26319f6ba
     "arabic": "إِنَّ مَعَ الْعُسْرِ يُسْرًا",
     "english": "Indeed, with hardship [will be] ease.",
     "reference": {
@@ -16,6 +24,7 @@
       "text": "Al-Inshirah (The Relief)"
     },
     "source": "https://quran.com/94/6",
+<<<<<<< HEAD
     "tags": [
       "ease",
       "patience",
@@ -33,14 +42,24 @@
       "userId": "user_3c62o2cu9",
       "userName": "Isai Ivanov",
       "timestamp": "2025-05-28T15:06:51.192Z"
+=======
+    "tags": ["ease", "patience", "encouragement"],
+    "translation_info": {
+      "translator": "Saheeh International",
+      "language": "en"
+>>>>>>> b6f3e98f09a7758e18f56347718c8ca26319f6ba
     }
   },
   {
     "id": "54_11",
+<<<<<<< HEAD
     "mood": [
       "sad",
       "reflection"
     ],
+=======
+    "mood": ["sad", "reflection"],
+>>>>>>> b6f3e98f09a7758e18f56347718c8ca26319f6ba
     "arabic": "وَفَجَّرْنَا الْأَرْضَ عُيُونًا فَالْتَقَى الْمَاءُ عَلَىٰ مَا أَنشَأَ",
     "english": "And We caused springs to gush forth, so the waters met for a matter already predestined.",
     "reference": {
@@ -49,11 +68,15 @@
       "text": "Al-Qamar (The Moon)"
     },
     "source": "https://quran.com/54/11",
+<<<<<<< HEAD
     "tags": [
       "miracle",
       "nature",
       "destiny"
     ],
+=======
+    "tags": ["miracle", "nature", "destiny"],
+>>>>>>> b6f3e98f09a7758e18f56347718c8ca26319f6ba
     "translation_info": {
       "translator": "Saheeh International",
       "language": "en"
@@ -61,10 +84,14 @@
   },
   {
     "id": "2_216",
+<<<<<<< HEAD
     "mood": [
       "hopeful",
       "patience"
     ],
+=======
+    "mood": ["hopeful", "patience"],
+>>>>>>> b6f3e98f09a7758e18f56347718c8ca26319f6ba
     "arabic": "وَعَسَىٰ أَن تَكْرَهُوا شَيْئًا وَهُوَ خَيْرٌ لَّكُمْ",
     "english": "But perhaps you hate a thing and it is good for you.",
     "reference": {
@@ -73,11 +100,15 @@
       "text": "Al-Baqarah (The Cow)"
     },
     "source": "https://quran.com/2/216",
+<<<<<<< HEAD
     "tags": [
       "wisdom",
       "hope",
       "trust"
     ],
+=======
+    "tags": ["wisdom", "hope", "trust"],
+>>>>>>> b6f3e98f09a7758e18f56347718c8ca26319f6ba
     "translation_info": {
       "translator": "Saheeh International",
       "language": "en"
@@ -85,10 +116,14 @@
   },
   {
     "id": "2_152",
+<<<<<<< HEAD
     "mood": [
       "grateful",
       "remembrance"
     ],
+=======
+    "mood": ["grateful", "remembrance"],
+>>>>>>> b6f3e98f09a7758e18f56347718c8ca26319f6ba
     "arabic": "فَاذْكُرُونِي أَذْكُرْكُمْ وَاشْكُرُوا لِي وَلَا تَكْفُرُونِ",
     "english": "So remember Me; I will remember you. And be grateful to Me and do not deny Me.",
     "reference": {
@@ -97,11 +132,15 @@
       "text": "Al-Baqarah (The Cow)"
     },
     "source": "https://quran.com/2/152",
+<<<<<<< HEAD
     "tags": [
       "gratitude",
       "remembrance",
       "faith"
     ],
+=======
+    "tags": ["gratitude", "remembrance", "faith"],
+>>>>>>> b6f3e98f09a7758e18f56347718c8ca26319f6ba
     "translation_info": {
       "translator": "Saheeh International",
       "language": "en"
@@ -109,6 +148,7 @@
   },
   {
     "id": "42_19",
+<<<<<<< HEAD
     "mood": [
       "hope",
       "comfort",
@@ -116,6 +156,9 @@
       "gratitude",
       "trust"
     ],
+=======
+    "mood": ["hope", "comfort", "reassurance", "gratitude", "trust"],
+>>>>>>> b6f3e98f09a7758e18f56347718c8ca26319f6ba
     "arabic": "ٱللَّهُ لَطِيفٌۢ بِعِبَادِهِۦ يَرْزُقُ مَن يَشَآءُ ۖ وَهُوَ ٱلْقَوِىُّ ٱلْعَزِيزُ ١٩",
     "english": "Allah is Ever Kind to His servants. He provides ˹abundantly˺ to whoever He wills. And He is the All-Powerful, Almighty.",
     "bangla": "আল্লাহ তা‘আলা তাঁর বান্দাদের প্রতি দয়াশীল; তিনি যাকে চান রিযিক দান করেন। তিনি প্রবল, পরাক্রমশালী।",
@@ -140,6 +183,7 @@
       "bangla_translator": "Gemini AI",
       "language": "multi"
     },
+<<<<<<< HEAD
     "created_at": "2025-05-27T14:35:26.501Z",
     "updated_at": "2025-05-27T16:40:50.449Z"
   },
@@ -218,3 +262,8 @@
     }
   }
 ]
+=======
+    "created_at": "2025-05-27T14:35:26.501Z"
+  }
+]
+>>>>>>> b6f3e98f09a7758e18f56347718c8ca26319f6ba
