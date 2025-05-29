@@ -1,14 +1,16 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "../ui/button";
 import { ModeToggle } from "../mode-toggle";
-import { Menu, X, Home, BookOpen, Info, ChevronRight, Plus } from "lucide-react";
+import { Menu, X, Home, BookOpen, Info, ChevronRight, Plus, LogIn } from "lucide-react";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "../ui/sheet";
 import { cn } from "../../lib/utils";
 import { useUser } from "../../contexts/UserContext";
+import { LoginDialog } from "../LoginDialog";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
   const location = useLocation();
   const { user } = useUser();
 
@@ -29,6 +31,7 @@ export function Navbar() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
+            <img src="/quran.svg" alt="QuranMood Logo" className="h-8 w-8" />
             <span className="text-xl font-bold">QuranMood</span>
           </Link>
 
@@ -49,6 +52,17 @@ export function Navbar() {
                 <span>{item.name}</span>
               </Link>
             ))}
+            {!user && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex items-center gap-2"
+                onClick={() => setIsLoginOpen(true)}
+              >
+                <LogIn className="h-4 w-4" />
+                <span>Login</span>
+              </Button>
+            )}
             <ModeToggle />
           </div>
 
@@ -85,12 +99,29 @@ export function Navbar() {
                       <ChevronRight className="h-4 w-4 text-muted-foreground" />
                     </Link>
                   ))}
+                  {!user && (
+                    <button
+                      onClick={() => {
+                        setIsOpen(false);
+                        setIsLoginOpen(true);
+                      }}
+                      className="flex items-center justify-between px-6 py-3 transition-colors hover:bg-accent/50 w-full"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <LogIn className="h-5 w-5" />
+                        <span className="font-medium">Login</span>
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                    </button>
+                  )}
                 </div>
               </SheetContent>
             </Sheet>
           </div>
         </div>
       </div>
+
+      <LoginDialog isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
     </nav>
   );
 } 

@@ -193,8 +193,12 @@ export function AllVerses() {
   }, []);
 
   useEffect(() => {
-    setCurrentPage(1);
-    fetchVerses(1);
+    const delayDebounceFn = setTimeout(() => {
+      setIsSearching(true);
+      fetchVerses(1);
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
   }, [searchQuery, selectedMood, selectedTag]);
 
   useEffect(() => {
@@ -208,6 +212,7 @@ export function AllVerses() {
     setSelectedMood(null);
     setSelectedTag(null);
     setCurrentPage(1);
+    fetchVerses(1);
   };
 
   const handleDelete = async (verse: Verse) => {
