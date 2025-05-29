@@ -8,6 +8,8 @@ const contactRoutes = require("./routes/contactRoutes");
 
 const app = express();
 
+const startTime = Date.now();
+
 
 connectDB();
 
@@ -22,8 +24,19 @@ app.use('/api/interactions', interactionRoutes);
 app.use('/api/contact', contactRoutes);
 
 
-app.get('/api', (req, res) => {
-  res.json({ status: 'ok', message: 'API is running' });
+app.get("/", (req, res) => {
+  const currentTime = Date.now();
+  const uptime = currentTime - startTime;
+  const timeString = new Date(uptime).toISOString().substr(11, 8);
+  res.send(`Quran Mood API is running | Uptime: ${timeString}`);
+});
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({
+    message: "Something went wrong!",
+    error: err.message
+  });
 });
 
 const PORT = process.env.PORT || 3000;

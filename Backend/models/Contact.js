@@ -10,7 +10,7 @@ const contactSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Index for better query performance
+
 contactSchema.index({ email: 1 });
 contactSchema.index({ status: 1 });
 

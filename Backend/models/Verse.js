@@ -32,7 +32,7 @@ const verseSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Indexes for better query performance
+
 verseSchema.index({ 'reference.surah': 1, 'reference.ayah': 1 }, { unique: true });
 verseSchema.index({ mood: 1 });
 verseSchema.index({ tags: 1 });

@@ -11,7 +11,7 @@ const interactionSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Indexes for better query performance
+
 interactionSchema.index({ verseId: 1, userId: 1, type: 1 });
 interactionSchema.index({ type: 1 });
 interactionSchema.index({ userId: 1 });
