@@ -143,7 +143,6 @@ export function AllVerses() {
       setAllVerses(verses);
       setTotalVerses(verses.length);
       
-    
       const moods = Array.from(
         new Set(verses.flatMap((verse: Verse) => verse.mood || []))
       ) as string[];
@@ -154,8 +153,16 @@ export function AllVerses() {
       setAllAvailableMoods(moods);
       setAllAvailableTags(tags);
       
-      
-      applyFilters(verses, 1);
+     
+      setFilteredVerses(verses.slice(0, 10));
+      setPagination({
+        currentPage: 1,
+        totalPages: Math.ceil(verses.length / 10),
+        totalVerses: verses.length,
+        versesPerPage: 10,
+        hasNextPage: verses.length > 10,
+        hasPrevPage: false
+      });
     } catch (error) {
       console.error("Error fetching verses:", error);
       toast.error(error instanceof Error ? error.message : "Failed to load verses");
@@ -169,7 +176,6 @@ export function AllVerses() {
   const applyFilters = (versesToFilter: Verse[], page: number = 1) => {
     let filtered = [...versesToFilter];
 
-    
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
@@ -183,20 +189,17 @@ export function AllVerses() {
       );
     }
 
-    
     if (selectedMood) {
       filtered = filtered.filter(verse =>
-        verse.mood.includes(selectedMood)
+        verse.mood?.includes(selectedMood)
       );
     }
 
- 
     if (selectedTag) {
       filtered = filtered.filter(verse =>
-        verse.tags.includes(selectedTag)
+        verse.tags?.includes(selectedTag)
       );
     }
-
 
     const totalFilteredVerses = filtered.length;
     const versesPerPage = 10;
@@ -213,7 +216,6 @@ export function AllVerses() {
       hasPrevPage: page > 1
     });
 
- 
     setFilteredVerses(filtered.slice(startIndex, endIndex));
   };
 
@@ -242,7 +244,9 @@ export function AllVerses() {
     setSelectedMood(null);
     setSelectedTag(null);
     setCurrentPage(1);
-    applyFilters(allVerses, 1);
+    if (allVerses.length > 0) {
+      applyFilters(allVerses, 1);
+    }
   };
 
   const handleDelete = async (verse: Verse) => {
@@ -289,7 +293,6 @@ export function AllVerses() {
       setVerseToDelete(null);
     }
   };
-
   const formatTimeAgo = (timestamp: string) => {
     try {
       return formatDistanceToNow(new Date(timestamp), { addSuffix: true });
