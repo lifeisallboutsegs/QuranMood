@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { VerseDisplay } from "../components/VerseDisplay";
 import { Button } from "../components/ui/button";
-import { ArrowLeft, AlertTriangle } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { useUser } from "../contexts/UserContext";
 import { Card, CardContent } from "../components/ui/card";
@@ -47,9 +47,11 @@ export function VersePage() {
   useEffect(() => {
     const fetchVerse = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/verse/${id}`);
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/verse/${id}`
+        );
         if (!response.ok) {
-          throw new Error('Failed to fetch verse');
+          throw new Error("Failed to fetch verse");
         }
         const data = await response.json();
         setVerse(data.verse);
@@ -158,9 +160,9 @@ export function VersePage() {
         </Button>
       </div>
 
-      <VerseDisplay 
-        verse={verse} 
-        isLoading={isLoading} 
+      <VerseDisplay
+        verse={verse}
+        isLoading={isLoading}
         onEdit={handleVerseEdit}
         isAdmin={user?.isAdmin}
       />
@@ -170,7 +172,8 @@ export function VersePage() {
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-destructive" />
             <p className="text-sm text-destructive">
-              Something is wrong with this verse data, click here to edit and fix.
+              Something is wrong with this verse data, click here to edit and
+              fix.
             </p>
           </div>
           <Button
@@ -185,4 +188,4 @@ export function VersePage() {
       )}
     </div>
   );
-} 
+}

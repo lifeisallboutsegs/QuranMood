@@ -78,12 +78,17 @@ import {
 } from "./ui/tooltip";
 import { toast } from "sonner";
 import { Textarea } from "./ui/textarea";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from "./ui/dialog";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { useUser } from "../contexts/UserContext";
 import { LoginDialog } from "./LoginDialog";
-import { formatDistanceToNow } from 'date-fns';
-
+import { formatDistanceToNow } from "date-fns";
 
 const colorSets = [
   "bg-green-500/10 text-green-500 hover:bg-green-500/20",
@@ -152,9 +157,7 @@ const iconSet = [
   CloudMoonRain
 ];
 
-
 const getMoodStyle = (mood: string) => {
- 
   const hash = mood
     .split("")
     .reduce((acc, char) => acc + char.charCodeAt(0), 0);
@@ -168,15 +171,12 @@ const getMoodStyle = (mood: string) => {
   };
 };
 
-
 const getMoodDescription = (mood: string) => {
-  
   const formattedMood = mood
     .split("_")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 
- 
   const descriptions: Record<string, string> = {
     peace: "Inner peace and tranquility",
     guidance: "Divine guidance and direction",
@@ -189,7 +189,6 @@ const getMoodDescription = (mood: string) => {
     gratitude: "Gratitude and thankfulness",
     trust: "Trust in Allah",
     reassurance: "Reassurance and confidence"
-   
   };
 
   return descriptions[mood] || `${formattedMood} - A spiritual state of being`;
@@ -295,7 +294,9 @@ const CommentItem = ({ comment, onDelete, onEdit }: CommentItemProps) => {
           <div className="flex-grow min-w-0">
             <div className="flex items-center justify-between gap-2 mb-2">
               <div className="flex items-center gap-2">
-                <span className="font-semibold text-foreground">{comment.userName}</span>
+                <span className="font-semibold text-foreground">
+                  {comment.userName}
+                </span>
                 <span className="text-sm text-muted-foreground">
                   {formatDate(comment.createdAt)}
                 </span>
@@ -384,99 +385,103 @@ const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return formatDistanceToNow(date, { addSuffix: true });
   } catch (error) {
-    return 'Invalid date';
+    return "Invalid date";
   }
 };
 
-
 const MemoizedCommentItem = React.memo(CommentItem);
 
+const CommentInput = React.memo(
+  ({
+    onSubmit,
+    isLoading
+  }: {
+    onSubmit: (content: string) => void;
+    isLoading: boolean;
+  }) => {
+    const [content, setContent] = React.useState("");
 
-const CommentInput = React.memo(({ 
-  onSubmit, 
-  isLoading 
-}: { 
-  onSubmit: (content: string) => void;
-  isLoading: boolean;
-}) => {
-  const [content, setContent] = React.useState("");
+    const handleSubmit = () => {
+      if (!content.trim()) return;
+      onSubmit(content);
+      setContent("");
+    };
 
-  const handleSubmit = () => {
-    if (!content.trim()) return;
-    onSubmit(content);
-    setContent("");
-  };
-
-  return (
-    <div className="flex-none border-t pt-4 mt-4">
-      <div className="space-y-2">
-        <Textarea
-          placeholder="Write a comment..."
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          className="min-h-[100px]"
-        />
-        <Button
-          onClick={handleSubmit}
-          disabled={!content.trim() || isLoading}
-          className="w-full"
-        >
-          Add Comment
-        </Button>
-      </div>
-    </div>
-  );
-});
-
-
-const CommentsList = React.memo(({ 
-  comments, 
-  onDelete, 
-  onEdit 
-}: { 
-  comments: Comment[];
-  onDelete: (id: string) => Promise<void>;
-  onEdit: (id: string, content: string) => Promise<void>;
-}) => {
-  return (
-    <div className="flex-1 overflow-hidden">
-      <ScrollArea className="h-full">
-        <div className="space-y-4 pr-4">
-          {comments.length === 0 ? (
-            <p className="text-center text-muted-foreground py-4">
-              No comments yet. Be the first to comment!
-            </p>
-          ) : (
-            comments.map((comment) => (
-              <MemoizedCommentItem
-                key={comment.id}
-                comment={comment}
-                onDelete={onDelete}
-                onEdit={onEdit}
-              />
-            ))
-          )}
+    return (
+      <div className="flex-none border-t pt-4 mt-4">
+        <div className="space-y-2">
+          <Textarea
+            placeholder="Write a comment..."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="min-h-[100px]"
+          />
+          <Button
+            onClick={handleSubmit}
+            disabled={!content.trim() || isLoading}
+            className="w-full"
+          >
+            Add Comment
+          </Button>
         </div>
-      </ScrollArea>
-    </div>
-  );
-});
+      </div>
+    );
+  }
+);
 
-export function VerseDisplay({ verse, isLoading, onEdit, isAdmin }: VerseDisplayProps) {
+const CommentsList = React.memo(
+  ({
+    comments,
+    onDelete,
+    onEdit
+  }: {
+    comments: Comment[];
+    onDelete: (id: string) => Promise<void>;
+    onEdit: (id: string, content: string) => Promise<void>;
+  }) => {
+    return (
+      <div className="flex-1 overflow-hidden">
+        <ScrollArea className="h-full">
+          <div className="space-y-4 pr-4">
+            {comments.length === 0 ? (
+              <p className="text-center text-muted-foreground py-4">
+                No comments yet. Be the first to comment!
+              </p>
+            ) : (
+              comments.map((comment) => (
+                <MemoizedCommentItem
+                  key={comment.id}
+                  comment={comment}
+                  onDelete={onDelete}
+                  onEdit={onEdit}
+                />
+              ))
+            )}
+          </div>
+        </ScrollArea>
+      </div>
+    );
+  }
+);
+
+export function VerseDisplay({
+  verse,
+  isLoading,
+  onEdit,
+  isAdmin
+}: VerseDisplayProps) {
   const { user } = useUser();
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [comments, setComments] = useState<Comment[]>([]);
-  const [newComment, setNewComment] = useState("");
+
   const [isCommentDialogOpen, setIsCommentDialogOpen] = useState(false);
   const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedVerse, setEditedVerse] = useState<Verse | null>(null);
   const [isLikeLoading, setIsLikeLoading] = useState(false);
   const [isCommentLoading, setIsCommentLoading] = useState(false);
-  const [isShareLoading, setIsShareLoading] = useState(false);
-  const [isBookmarkLoading, setIsBookmarkLoading] = useState(false);
 
   useEffect(() => {
     if (verse?.id) {
@@ -493,7 +498,9 @@ export function VerseDisplay({ verse, isLoading, onEdit, isAdmin }: VerseDisplay
 
   const fetchLikes = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/interactions/likes/${verse?.id}`);
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/interactions/likes/${verse?.id}`
+      );
       const data = await response.json();
       setLikeCount(data.count);
       setIsLiked(data.likes.some((like: any) => like.userId === user?.id));
@@ -504,7 +511,9 @@ export function VerseDisplay({ verse, isLoading, onEdit, isAdmin }: VerseDisplay
 
   const fetchComments = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/interactions/comments/${verse?.id}`);
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/interactions/comments/${verse?.id}`
+      );
       const data = await response.json();
       setComments(data.comments);
     } catch (error) {
@@ -558,16 +567,19 @@ export function VerseDisplay({ verse, isLoading, onEdit, isAdmin }: VerseDisplay
 
     try {
       setIsLikeLoading(true);
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/interactions/likes/${verse?.id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ 
-          userId: user.id,
-          userName: user.name 
-        }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/interactions/likes/${verse?.id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            userId: user.id,
+            userName: user.name
+          })
+        }
+      );
       const data = await response.json();
       setLikeCount(data.likes);
       setIsLiked(!isLiked);
@@ -580,92 +592,117 @@ export function VerseDisplay({ verse, isLoading, onEdit, isAdmin }: VerseDisplay
     }
   };
 
-  const handleAddComment = React.useCallback(async (content: string) => {
-    if (!user || !verse?.id) return;
+  const handleAddComment = React.useCallback(
+    async (content: string) => {
+      if (!user || !verse?.id) return;
 
-    const toastId = toast.loading("Adding comment...");
-    try {
-      setIsCommentLoading(true);
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/interactions/comments/${verse.id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: user.id,
-          userName: user.name,
-          content: content.trim(),
-        }),
-      });
-      const data = await response.json();
-      setComments(prev => [data.comment, ...prev]);
-      toast.success("Comment added successfully", { id: toastId });
-    } catch (error) {
-      console.error("Error adding comment:", error);
-      toast.error("Failed to add comment", { id: toastId });
-    } finally {
-      setIsCommentLoading(false);
-    }
-  }, [user, verse?.id]);
-
-  const handleEditComment = React.useCallback(async (commentId: string, content: string) => {
-    const toastId = toast.loading("Updating comment...");
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/interactions/comments/${commentId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: user?.id,
-          content: content,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update comment');
+      const toastId = toast.loading("Adding comment...");
+      try {
+        setIsCommentLoading(true);
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/interactions/comments/${
+            verse.id
+          }`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              userId: user.id,
+              userName: user.name,
+              content: content.trim()
+            })
+          }
+        );
+        const data = await response.json();
+        setComments((prev) => [data.comment, ...prev]);
+        toast.success("Comment added successfully", { id: toastId });
+      } catch (error) {
+        console.error("Error adding comment:", error);
+        toast.error("Failed to add comment", { id: toastId });
+      } finally {
+        setIsCommentLoading(false);
       }
+    },
+    [user, verse?.id]
+  );
 
-      const data = await response.json();
-      setComments(prev => prev.map(comment => 
-        comment.id === commentId ? data.comment : comment
-      ));
-      toast.success('Comment updated successfully', { id: toastId });
-    } catch (error) {
-      console.error('Error updating comment:', error);
-      toast.error('Failed to update comment', { id: toastId });
-      throw error;
-    }
-  }, [user?.id]);
+  const handleEditComment = React.useCallback(
+    async (commentId: string, content: string) => {
+      const toastId = toast.loading("Updating comment...");
+      try {
+        const response = await fetch(
+          `${
+            import.meta.env.VITE_API_URL
+          }/api/interactions/comments/${commentId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              userId: user?.id,
+              content: content
+            })
+          }
+        );
 
-  const handleDeleteComment = React.useCallback(async (commentId: string) => {
-    if (!user) {
-      setIsLoginDialogOpen(true);
-      return;
-    }
-
-    const toastId = toast.loading("Deleting comment...");
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/interactions/comments/${commentId}`,
-        {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId: user.id }),
+        if (!response.ok) {
+          throw new Error("Failed to update comment");
         }
-      );
 
-      if (!response.ok) {
-        throw new Error("Failed to delete comment");
+        const data = await response.json();
+        setComments((prev) =>
+          prev.map((comment) =>
+            comment.id === commentId ? data.comment : comment
+          )
+        );
+        toast.success("Comment updated successfully", { id: toastId });
+      } catch (error) {
+        console.error("Error updating comment:", error);
+        toast.error("Failed to update comment", { id: toastId });
+        throw error;
+      }
+    },
+    [user?.id]
+  );
+
+  const handleDeleteComment = React.useCallback(
+    async (commentId: string) => {
+      if (!user) {
+        setIsLoginDialogOpen(true);
+        return;
       }
 
-      setComments(prev => prev.filter(comment => comment.id !== commentId));
-      toast.success("Comment deleted successfully", { id: toastId });
-    } catch (error) {
-      console.error("Error deleting comment:", error);
-      toast.error("Failed to delete comment", { id: toastId });
-    }
-  }, [user]);
+      const toastId = toast.loading("Deleting comment...");
+      try {
+        const response = await fetch(
+          `${
+            import.meta.env.VITE_API_URL
+          }/api/interactions/comments/${commentId}`,
+          {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: user.id })
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to delete comment");
+        }
+
+        setComments((prev) =>
+          prev.filter((comment) => comment.id !== commentId)
+        );
+        toast.success("Comment deleted successfully", { id: toastId });
+      } catch (error) {
+        console.error("Error deleting comment:", error);
+        toast.error("Failed to delete comment", { id: toastId });
+      }
+    },
+    [user]
+  );
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -675,13 +712,16 @@ export function VerseDisplay({ verse, isLoading, onEdit, isAdmin }: VerseDisplay
     if (!editedVerse) return;
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/verse/${editedVerse.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(editedVerse),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/verse/${editedVerse.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(editedVerse)
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to update verse");
@@ -737,7 +777,8 @@ export function VerseDisplay({ verse, isLoading, onEdit, isAdmin }: VerseDisplay
                 </span>
               ) : (
                 <span>
-                  Surah {editedVerse.reference?.surah || 'N/A'}, Verse {editedVerse.reference?.ayah || 'N/A'}
+                  Surah {editedVerse.reference?.surah || "N/A"}, Verse{" "}
+                  {editedVerse.reference?.ayah || "N/A"}
                 </span>
               )}
             </CardTitle>
@@ -807,7 +848,11 @@ export function VerseDisplay({ verse, isLoading, onEdit, isAdmin }: VerseDisplay
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" onClick={handleBookmark}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={handleBookmark}
+                    >
                       {isBookmarked ? (
                         <BookmarkCheck className="h-5 w-5 sm:h-4 sm:w-4" />
                       ) : (
@@ -850,7 +895,9 @@ export function VerseDisplay({ verse, isLoading, onEdit, isAdmin }: VerseDisplay
               {isEditing ? (
                 <Textarea
                   value={editedVerse.arabic}
-                  onChange={(e) => setEditedVerse({ ...editedVerse, arabic: e.target.value })}
+                  onChange={(e) =>
+                    setEditedVerse({ ...editedVerse, arabic: e.target.value })
+                  }
                   className="min-h-[100px] text-right"
                 />
               ) : (
@@ -869,7 +916,9 @@ export function VerseDisplay({ verse, isLoading, onEdit, isAdmin }: VerseDisplay
               {isEditing ? (
                 <Textarea
                   value={editedVerse.english}
-                  onChange={(e) => setEditedVerse({ ...editedVerse, english: e.target.value })}
+                  onChange={(e) =>
+                    setEditedVerse({ ...editedVerse, english: e.target.value })
+                  }
                   className="min-h-[100px]"
                 />
               ) : (
@@ -893,7 +942,9 @@ export function VerseDisplay({ verse, isLoading, onEdit, isAdmin }: VerseDisplay
               {isEditing ? (
                 <Textarea
                   value={editedVerse.bangla}
-                  onChange={(e) => setEditedVerse({ ...editedVerse, bangla: e.target.value })}
+                  onChange={(e) =>
+                    setEditedVerse({ ...editedVerse, bangla: e.target.value })
+                  }
                   className="min-h-[100px]"
                 />
               ) : (
@@ -946,11 +997,7 @@ export function VerseDisplay({ verse, isLoading, onEdit, isAdmin }: VerseDisplay
               </div>
               <div className="flex flex-wrap gap-2">
                 {verse.tags.map((tag) => (
-                  <Badge
-                    key={tag}
-                    variant="outline"
-                    className="cursor-default"
-                  >
+                  <Badge key={tag} variant="outline" className="cursor-default">
                     {tag}
                   </Badge>
                 ))}
@@ -981,10 +1028,15 @@ export function VerseDisplay({ verse, isLoading, onEdit, isAdmin }: VerseDisplay
                 disabled={isLikeLoading}
               >
                 <Heart className={`h-4 w-4 ${isLiked ? "fill-current" : ""}`} />
-                <span>{likeCount} {likeCount === 1 ? "Like" : "Likes"}</span>
+                <span>
+                  {likeCount} {likeCount === 1 ? "Like" : "Likes"}
+                </span>
               </Button>
 
-              <Dialog open={isCommentDialogOpen} onOpenChange={setIsCommentDialogOpen}>
+              <Dialog
+                open={isCommentDialogOpen}
+                onOpenChange={setIsCommentDialogOpen}
+              >
                 <DialogTrigger asChild>
                   <Button
                     variant="outline"
@@ -992,7 +1044,10 @@ export function VerseDisplay({ verse, isLoading, onEdit, isAdmin }: VerseDisplay
                     className="flex items-center gap-2"
                   >
                     <MessageSquare className="h-4 w-4" />
-                    <span>{comments.length} {comments.length === 1 ? "Comment" : "Comments"}</span>
+                    <span>
+                      {comments.length}{" "}
+                      {comments.length === 1 ? "Comment" : "Comments"}
+                    </span>
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[500px] h-[80vh] flex flex-col">
@@ -1037,4 +1092,3 @@ export function VerseDisplay({ verse, isLoading, onEdit, isAdmin }: VerseDisplay
     </>
   );
 }
- 
