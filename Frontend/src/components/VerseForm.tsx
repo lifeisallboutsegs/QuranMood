@@ -87,14 +87,9 @@ export function VerseForm({ verse, mode, isAI, onSubmit, onCancel }: VerseFormPr
         userName: user.name
       });
       
-  
-      toast.success(mode === "create" ? "Verse created successfully" : "Verse updated successfully");
-      
-
       if (mode === "edit" && verse?.id) {
         navigate(`/verse/${verse.id}`, { replace: true });
       } else if (mode === "create") {
-    
         navigate("/all-verses", { replace: true });
       }
     } catch (error) {
