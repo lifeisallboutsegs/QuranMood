@@ -102,7 +102,7 @@ const getRandomColor = (text: string) => {
 export function AllVerses() {
   const navigate = useNavigate();
   const { user } = useUser();
-  const [verses, setVerses] = useState<Verse[]>([]);
+  const [allVerses, setAllVerses] = useState<Verse[]>([]);
   const [filteredVerses, setFilteredVerses] = useState<Verse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -125,48 +125,13 @@ export function AllVerses() {
     hasPrevPage: false
   });
 
-  const fetchAllMoodsAndTags = async () => {
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/verse/all?limit=1000`
-      );
-      const data = await response.json();
+  const [totalVerses, setTotalVerses] = useState(0);
 
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to fetch verses for filters");
-      }
-
-      const moods = Array.from(
-        new Set(data.verses?.flatMap((verse: Verse) => verse.mood || []) || [])
-      ) as string[];
-      const tags = Array.from(
-        new Set(data.verses?.flatMap((verse: Verse) => verse.tags || []) || [])
-      ) as string[];
-
-      setAllAvailableMoods(moods);
-      setAllAvailableTags(tags);
-    } catch (error) {
-      console.error("Error fetching moods and tags:", error);
-      toast.error(error instanceof Error ? error.message : "Failed to load filters");
-      setAllAvailableMoods([]);
-      setAllAvailableTags([]);
-    }
-  };
-
-  const fetchVerses = async (page: number = 1) => {
+  const fetchAllVerses = async () => {
     try {
       setIsLoading(true);
-      const queryParams = new URLSearchParams({
-        page: page.toString(),
-        limit: "10"
-      });
-
-      if (searchQuery) queryParams.append("search", searchQuery);
-      if (selectedMood) queryParams.append("mood", selectedMood);
-      if (selectedTag) queryParams.append("tag", selectedTag);
-
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/verse/all?${queryParams}`
+        `${import.meta.env.VITE_API_URL}/api/verse/all?limit=1000`
       );
       const data = await response.json();
 
@@ -174,28 +139,93 @@ export function AllVerses() {
         throw new Error(data.message || "Failed to fetch verses");
       }
 
-      setVerses(data.verses || []);
-      setFilteredVerses(data.verses || []);
-      setPagination(data.pagination);
+      const verses = data.verses || [];
+      setAllVerses(verses);
+      setTotalVerses(verses.length);
+      
+    
+      const moods = Array.from(
+        new Set(verses.flatMap((verse: Verse) => verse.mood || []))
+      ) as string[];
+      const tags = Array.from(
+        new Set(verses.flatMap((verse: Verse) => verse.tags || []))
+      ) as string[];
+
+      setAllAvailableMoods(moods);
+      setAllAvailableTags(tags);
+      
+      
+      applyFilters(verses, 1);
     } catch (error) {
       console.error("Error fetching verses:", error);
       toast.error(error instanceof Error ? error.message : "Failed to load verses");
-      setVerses([]);
+      setAllVerses([]);
       setFilteredVerses([]);
     } finally {
       setIsLoading(false);
     }
   };
 
+  const applyFilters = (versesToFilter: Verse[], page: number = 1) => {
+    let filtered = [...versesToFilter];
+
+    
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        verse =>
+          (verse.arabic?.toLowerCase() || '').includes(query) ||
+          (verse.english?.toLowerCase() || '').includes(query) ||
+          (verse.bangla?.toLowerCase() || '').includes(query) ||
+          (verse.reference.text?.toLowerCase() || '').includes(query) ||
+          verse.tags?.some(tag => (tag?.toLowerCase() || '').includes(query)) ||
+          verse.mood?.some(m => (m?.toLowerCase() || '').includes(query))
+      );
+    }
+
+    
+    if (selectedMood) {
+      filtered = filtered.filter(verse =>
+        verse.mood.includes(selectedMood)
+      );
+    }
+
+ 
+    if (selectedTag) {
+      filtered = filtered.filter(verse =>
+        verse.tags.includes(selectedTag)
+      );
+    }
+
+
+    const totalFilteredVerses = filtered.length;
+    const versesPerPage = 10;
+    const totalPages = Math.ceil(totalFilteredVerses / versesPerPage);
+    const startIndex = (page - 1) * versesPerPage;
+    const endIndex = startIndex + versesPerPage;
+
+    setPagination({
+      currentPage: page,
+      totalPages,
+      totalVerses: totalFilteredVerses,
+      versesPerPage,
+      hasNextPage: page < totalPages,
+      hasPrevPage: page > 1
+    });
+
+ 
+    setFilteredVerses(filtered.slice(startIndex, endIndex));
+  };
+
   useEffect(() => {
-    fetchAllMoodsAndTags();
-    fetchVerses(1);
+    fetchAllVerses();
   }, []);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       setIsSearching(true);
-      fetchVerses(1);
+      applyFilters(allVerses, 1);
+      setIsSearching(false);
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
@@ -203,7 +233,7 @@ export function AllVerses() {
 
   useEffect(() => {
     if (currentPage > 1) {
-      fetchVerses(currentPage);
+      applyFilters(allVerses, currentPage);
     }
   }, [currentPage]);
 
@@ -212,7 +242,7 @@ export function AllVerses() {
     setSelectedMood(null);
     setSelectedTag(null);
     setCurrentPage(1);
-    fetchVerses(1);
+    applyFilters(allVerses, 1);
   };
 
   const handleDelete = async (verse: Verse) => {
@@ -244,11 +274,13 @@ export function AllVerses() {
         throw new Error(data.message || "Failed to delete verse");
       }
 
-      setVerses((prev) => prev.filter((v) => v.id !== verse.id));
-      setFilteredVerses((prev) => prev.filter((v) => v.id !== verse.id));
+      
+      const updatedVerses = allVerses.filter(v => v.id !== verse.id);
+      setAllVerses(updatedVerses);
+      setTotalVerses(updatedVerses.length);
+      applyFilters(updatedVerses, currentPage);
+      
       toast.success(data.message || "Verse deleted successfully");
-
-      fetchAllMoodsAndTags();
     } catch (error) {
       console.error("Error deleting verse:", error);
       toast.error(error instanceof Error ? error.message : "Failed to delete verse");
@@ -448,8 +480,10 @@ export function AllVerses() {
                 </div>
               ) : (
                 <p>
-                  Showing {filteredVerses.length} of {pagination.totalVerses}{" "}
-                  verses
+                  Showing {filteredVerses.length} of {pagination.totalVerses} verses
+                  {pagination.totalVerses !== totalVerses && (
+                    <span> (from {totalVerses} total)</span>
+                  )}
                 </p>
               )}
             </div>
