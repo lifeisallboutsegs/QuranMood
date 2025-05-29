@@ -77,8 +77,15 @@ exports.addVerse = async (req, res) => {
       }
 
       console.log(`Enhancing verse with Gemini AI...`);
-      const enhanceFunction = useStreaming === "true" ? enhanceVerseWithGeminiStream : enhanceVerseWithGemini;
-      const enhancedVerse = await enhanceFunction(scrapedData, surahNum, verseNum);
+      const enhanceFunction =
+        useStreaming === "true"
+          ? enhanceVerseWithGeminiStream
+          : enhanceVerseWithGemini;
+      const enhancedVerse = await enhanceFunction(
+        scrapedData,
+        surahNum,
+        verseNum
+      );
 
       enhancedVerse.created_by = {
         userId,
@@ -109,7 +116,10 @@ exports.addVerse = async (req, res) => {
         });
       }
 
-      if (scrapeError.message.includes("AI service") || scrapeError.message.includes("Gemini")) {
+      if (
+        scrapeError.message.includes("AI service") ||
+        scrapeError.message.includes("Gemini")
+      ) {
         return res.status(503).json({
           message: "AI enhancement service is currently unavailable",
           error: scrapeError.message,
@@ -428,7 +438,14 @@ exports.getMoods = async (req, res) => {
     const allMoods = verses.flatMap((verse) => verse.mood || []);
     const uniqueMoods = [...new Set(allMoods)];
 
-    res.json({ moods: uniqueMoods });
+    const randomMoods = uniqueMoods
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 10);
+
+    res.json({
+      moods: randomMoods,
+      totalMoods: uniqueMoods.length
+    });
   } catch (err) {
     console.error("Error in getMoods:", err);
     res.status(500).json({
