@@ -4,11 +4,25 @@ import { useUser } from "../contexts/UserContext";
 import { VerseDisplay } from "../components/VerseDisplay";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle
+} from "../components/ui/card";
 import { ScrollArea } from "../components/ui/scroll-area";
 import { Badge } from "../components/ui/badge";
 import { Separator } from "../components/ui/separator";
-import { Loader2, Search, Filter, X, Pencil, Trash2, Eye, MoreVertical } from "lucide-react";
+import {
+  Loader2,
+  Search,
+  Filter,
+  X,
+  Pencil,
+  Trash2,
+  Eye,
+  MoreVertical
+} from "lucide-react";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
 import {
@@ -19,13 +33,13 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialogTitle
 } from "../components/ui/alert-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from "../components/ui/dropdown-menu";
 
 interface Verse {
@@ -77,9 +91,11 @@ const getRandomColor = (text: string) => {
     "bg-purple-100 text-purple-800",
     "bg-pink-100 text-pink-800",
     "bg-indigo-100 text-indigo-800",
-    "bg-orange-100 text-orange-800",
+    "bg-orange-100 text-orange-800"
   ];
-  const index = text.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const index = text
+    .split("")
+    .reduce((acc, char) => acc + char.charCodeAt(0), 0);
   return colors[index % colors.length];
 };
 
@@ -93,8 +109,10 @@ export function AllVerses() {
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [isSearching, setIsSearching] = useState(false);
-  const [allMoods, setAllMoods] = useState<string[]>([]);
-  const [allTags, setAllTags] = useState<string[]>([]);
+
+  const [allAvailableMoods, setAllAvailableMoods] = useState<string[]>([]);
+  const [allAvailableTags, setAllAvailableTags] = useState<string[]>([]);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [verseToDelete, setVerseToDelete] = useState<Verse | null>(null);
@@ -107,6 +125,31 @@ export function AllVerses() {
     hasPrevPage: false
   });
 
+  const fetchAllMoodsAndTags = async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/verse/all?limit=1000`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch all verses for filters");
+      }
+      const data = await response.json();
+
+      const moods = Array.from(
+        new Set(data.verses?.flatMap((verse: Verse) => verse.mood || []) || [])
+      ) as string[];
+      const tags = Array.from(
+        new Set(data.verses?.flatMap((verse: Verse) => verse.tags || []) || [])
+      ) as string[];
+
+      setAllAvailableMoods(moods);
+      setAllAvailableTags(tags);
+    } catch (error) {
+      console.error("Error fetching moods and tags:", error);
+      setAllAvailableMoods([]);
+      setAllAvailableTags([]);
+    }
+  };
 
   const fetchVerses = async (page: number = 1) => {
     try {
@@ -120,7 +163,9 @@ export function AllVerses() {
       if (selectedMood) queryParams.append("mood", selectedMood);
       if (selectedTag) queryParams.append("tag", selectedTag);
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/verse/all?${queryParams}`);
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/verse/all?${queryParams}`
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch verses");
       }
@@ -128,33 +173,30 @@ export function AllVerses() {
       setVerses(data.verses || []);
       setFilteredVerses(data.verses || []);
       setPagination(data.pagination);
-      
-      
-      const moods = Array.from(new Set(data.verses?.flatMap((verse: Verse) => verse.mood || []) || [])) as string[];
-      const tags = Array.from(new Set(data.verses?.flatMap((verse: Verse) => verse.tags || []) || [])) as string[];
-      setAllMoods(moods);
-      setAllTags(tags);
     } catch (error) {
       console.error("Error fetching verses:", error);
       toast.error("Failed to load verses");
       setVerses([]);
       setFilteredVerses([]);
-      setAllMoods([]);
-      setAllTags([]);
     } finally {
       setIsLoading(false);
     }
   };
 
+  useEffect(() => {
+    fetchAllMoodsAndTags();
+    fetchVerses(1);
+  }, []);
 
   useEffect(() => {
     setCurrentPage(1);
     fetchVerses(1);
   }, [searchQuery, selectedMood, selectedTag]);
 
- 
   useEffect(() => {
-    fetchVerses(currentPage);
+    if (currentPage > 1) {
+      fetchVerses(currentPage);
+    }
   }, [currentPage]);
 
   const clearFilters = () => {
@@ -166,24 +208,29 @@ export function AllVerses() {
 
   const handleDelete = async (verse: Verse) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/verse/${verse.id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: user?.id,
-          userName: user?.name,
-        }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/verse/${verse.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            userId: user?.id,
+            userName: user?.name
+          })
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to delete verse");
       }
 
-      setVerses(prev => prev.filter(v => v.id !== verse.id));
-      setFilteredVerses(prev => prev.filter(v => v.id !== verse.id));
+      setVerses((prev) => prev.filter((v) => v.id !== verse.id));
+      setFilteredVerses((prev) => prev.filter((v) => v.id !== verse.id));
       toast.success("Verse deleted successfully");
+
+      fetchAllMoodsAndTags();
     } catch (error) {
       console.error("Error deleting verse:", error);
       toast.error("Failed to delete verse");
@@ -205,9 +252,9 @@ export function AllVerses() {
     return user?.id === userId;
   };
 
-  if (isLoading) {
+  if (isLoading && allAvailableMoods.length === 0) {
     return (
-      <div className="container mx-auto py-8 px-4 max-w-3xl">
+      <div className="container mx-auto py-8 px-4 max-w-4xl">
         <Card className="mb-8">
           <CardHeader>
             <div className="h-8 bg-muted rounded w-1/4 animate-pulse"></div>
@@ -228,7 +275,10 @@ export function AllVerses() {
                   <div className="h-4 bg-muted rounded w-24 mb-2 animate-pulse"></div>
                   <div className="flex flex-wrap gap-2">
                     {[1, 2, 3, 4].map((i) => (
-                      <div key={i} className="h-6 bg-muted rounded-full w-20 animate-pulse"></div>
+                      <div
+                        key={i}
+                        className="h-6 bg-muted rounded-full w-20 animate-pulse"
+                      ></div>
                     ))}
                   </div>
                 </div>
@@ -237,7 +287,10 @@ export function AllVerses() {
                   <div className="h-4 bg-muted rounded w-24 mb-2 animate-pulse"></div>
                   <div className="flex flex-wrap gap-2">
                     {[1, 2, 3, 4].map((i) => (
-                      <div key={i} className="h-6 bg-muted rounded-full w-20 animate-pulse"></div>
+                      <div
+                        key={i}
+                        className="h-6 bg-muted rounded-full w-20 animate-pulse"
+                      ></div>
                     ))}
                   </div>
                 </div>
@@ -265,13 +318,19 @@ export function AllVerses() {
 
                   <div className="flex flex-wrap gap-2">
                     {[1, 2].map((j) => (
-                      <div key={j} className="h-6 bg-muted rounded-full w-20"></div>
+                      <div
+                        key={j}
+                        className="h-6 bg-muted rounded-full w-20"
+                      ></div>
                     ))}
                   </div>
 
                   <div className="flex flex-wrap gap-2">
                     {[1, 2, 3].map((j) => (
-                      <div key={j} className="h-6 bg-muted rounded-full w-16"></div>
+                      <div
+                        key={j}
+                        className="h-6 bg-muted rounded-full w-16"
+                      ></div>
                     ))}
                   </div>
 
@@ -281,7 +340,7 @@ export function AllVerses() {
                   </div>
 
                   <Separator className="my-4" />
-                  
+
                   <div className="flex justify-end">
                     <div className="h-8 bg-muted rounded w-24"></div>
                   </div>
@@ -295,7 +354,7 @@ export function AllVerses() {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-3xl">
+    <div className="container mx-auto py-8 px-4 max-w-4xl">
       <Card className="mb-8">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">All Verses</CardTitle>
@@ -328,12 +387,14 @@ export function AllVerses() {
               <div>
                 <h3 className="text-sm font-medium mb-2">Filter by Mood</h3>
                 <div className="flex flex-wrap gap-2">
-                  {allMoods.map((mood) => (
+                  {allAvailableMoods.map((mood) => (
                     <Badge
                       key={mood}
                       variant={selectedMood === mood ? "default" : "outline"}
                       className="cursor-pointer"
-                      onClick={() => setSelectedMood(selectedMood === mood ? null : mood)}
+                      onClick={() =>
+                        setSelectedMood(selectedMood === mood ? null : mood)
+                      }
                     >
                       {mood}
                     </Badge>
@@ -344,12 +405,14 @@ export function AllVerses() {
               <div>
                 <h3 className="text-sm font-medium mb-2">Filter by Tag</h3>
                 <div className="flex flex-wrap gap-2">
-                  {allTags.map((tag) => (
+                  {allAvailableTags.map((tag) => (
                     <Badge
                       key={tag}
                       variant={selectedTag === tag ? "default" : "outline"}
                       className="cursor-pointer"
-                      onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
+                      onClick={() =>
+                        setSelectedTag(selectedTag === tag ? null : tag)
+                      }
                     >
                       {tag}
                     </Badge>
@@ -367,7 +430,8 @@ export function AllVerses() {
                 </div>
               ) : (
                 <p>
-                  Showing {filteredVerses.length} of {verses.length} verses
+                  Showing {filteredVerses.length} of {pagination.totalVerses}{" "}
+                  verses
                 </p>
               )}
             </div>
@@ -376,38 +440,87 @@ export function AllVerses() {
       </Card>
 
       {/* Verses List */}
-      <div className="space-y-6">
-        {filteredVerses.map((verse) => (
-          <Card key={verse.id} className="overflow-hidden">
-            <CardContent className="p-6">
-              <div className="space-y-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="text-lg font-semibold">
-                      {verse.reference.text} {verse.reference.surah}:{verse.reference.ayah}
-                    </h3>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {verse.mood.map((m) => (
-                        <Badge key={m} className={getRandomColor(m)}>
-                          {m}
-                        </Badge>
-                      ))}
-                    </div>
+      {isLoading ? (
+        <div className="space-y-6">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="animate-pulse">
+              <CardContent className="p-6">
+                <div className="space-y-4">
+                  <div className="flex justify-between items-start">
+                    <div className="h-4 bg-muted rounded w-1/4"></div>
+                    <div className="h-8 bg-muted rounded w-8"></div>
                   </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => navigate(`/verse/${verse.id}`)}>
-                        <Eye className="mr-2 h-4 w-4" />
-                        View Details
-                      </DropdownMenuItem>
-                      {user && (
-                        <>
-                          <DropdownMenuItem onClick={() => navigate(`/edit/${verse.id}`)}>
+
+                  <div className="h-8 bg-muted rounded"></div>
+                  <div className="space-y-2">
+                    <div className="h-6 bg-muted rounded"></div>
+                    <div className="h-6 bg-muted rounded w-2/3"></div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    {[1, 2].map((j) => (
+                      <div
+                        key={j}
+                        className="h-6 bg-muted rounded-full w-20"
+                      ></div>
+                    ))}
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    {[1, 2, 3].map((j) => (
+                      <div
+                        key={j}
+                        className="h-6 bg-muted rounded-full w-16"
+                      ></div>
+                    ))}
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="h-4 bg-muted rounded w-1/3"></div>
+                    <div className="h-4 bg-muted rounded w-1/4"></div>
+                  </div>
+
+                  <Separator className="my-4" />
+
+                  <div className="flex justify-end">
+                    <div className="h-8 bg-muted rounded w-24"></div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {filteredVerses.map((verse) => (
+            <Card key={verse.id} className="overflow-hidden">
+              <CardContent className="p-6">
+                <div className="space-y-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="text-lg font-semibold">
+                        {verse.reference.text} {verse.reference.surah}:
+                        {verse.reference.ayah}
+                      </h3>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {verse.mood.map((m) => (
+                          <Badge key={m} className={getRandomColor(m)}>
+                            {m}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                    {user && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            onClick={() => navigate(`/edit/${verse.id}`)}
+                          >
                             <Pencil className="mr-2 h-4 w-4" />
                             Edit
                           </DropdownMenuItem>
@@ -421,121 +534,160 @@ export function AllVerses() {
                             <Trash2 className="mr-2 h-4 w-4" />
                             Delete
                           </DropdownMenuItem>
-                        </>
-                      )}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
+                  </div>
 
-                <div className="space-y-2">
-                  <p className="text-2xl font-arabic text-right">{verse.arabic}</p>
-                  <p className="text-muted-foreground">{verse.english}</p>
-                  {verse.bangla && <p className="text-muted-foreground">{verse.bangla}</p>}
-                </div>
-
-                <div className="flex flex-wrap gap-2">
-                  {verse.tags.map((tag) => (
-                    <Badge key={tag} variant="outline">
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-
-                <div className="text-sm text-muted-foreground space-y-1">
-                  {verse.created_by && (
-                    <p>
-                      Added {formatTimeAgo(verse.created_by.timestamp)} by{" "}
-                      {isCurrentUser(verse.created_by.userId) ? "you" : verse.created_by.userName}
+                  <div className="space-y-2">
+                    <p className="text-2xl font-arabic text-right">
+                      {verse.arabic}
                     </p>
-                  )}
-                  {verse.updated_by && (
-                    <p>
-                      Last updated {formatTimeAgo(verse.updated_by.timestamp)} by{" "}
-                      {isCurrentUser(verse.updated_by.userId) ? "you" : verse.updated_by.userName}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                    <p className="text-muted-foreground">{verse.english}</p>
+                    {verse.bangla && (
+                      <p className="text-muted-foreground">{verse.bangla}</p>
+                    )}
+                  </div>
 
-        {filteredVerses.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">No verses found matching your criteria</p>
-            <Button
-              variant="link"
-              onClick={clearFilters}
-              className="mt-2"
-            >
-              Clear all filters
-            </Button>
-          </div>
-        )}
+                  <div className="flex flex-wrap gap-2">
+                    {verse.tags.map((tag) => (
+                      <Badge key={tag} variant="outline">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
 
-        {/* Pagination */}
-        {pagination.totalPages > 1 && (
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-8">
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                disabled={!pagination.hasPrevPage}
-                size="sm"
-              >
-                Previous
-              </Button>
-              <div className="flex items-center gap-1">
-                {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
-               
-                  let pageNum;
-                  if (pagination.totalPages <= 5) {
-                    pageNum = i + 1;
-                  } else if (pagination.currentPage <= 3) {
-                    pageNum = i + 1;
-                  } else if (pagination.currentPage >= pagination.totalPages - 2) {
-                    pageNum = pagination.totalPages - 4 + i;
-                  } else {
-                    pageNum = pagination.currentPage - 2 + i;
-                  }
+                  <div className="text-sm text-muted-foreground space-y-1">
+                    {verse.created_by && (
+                      <p>
+                        Added {formatTimeAgo(verse.created_by.timestamp)} by{" "}
+                        {isCurrentUser(verse.created_by.userId)
+                          ? "you"
+                          : verse.created_by.userName}
+                      </p>
+                    )}
+                    {verse.updated_by && (
+                      <p>
+                        Last updated {formatTimeAgo(verse.updated_by.timestamp)}{" "}
+                        by{" "}
+                        {isCurrentUser(verse.updated_by.userId)
+                          ? "you"
+                          : verse.updated_by.userName}
+                      </p>
+                    )}
+                  </div>
 
-                  return (
+                  <Separator className="my-4" />
+
+                  <div className="flex justify-end">
                     <Button
-                      key={pageNum}
-                      variant={pagination.currentPage === pageNum ? "default" : "outline"}
-                      onClick={() => setCurrentPage(pageNum)}
-                      size="sm"
-                      className="w-8 h-8 p-0"
+                      variant="outline"
+                      onClick={() => navigate(`/verse/${verse.id}`)}
+                      className="flex items-center gap-2"
                     >
-                      {pageNum}
+                      <Eye className="h-4 w-4" />
+                      View Details
                     </Button>
-                  );
-                })}
-              </div>
-              <Button
-                variant="outline"
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, pagination.totalPages))}
-                disabled={!pagination.hasNextPage}
-                size="sm"
-              >
-                Next
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+
+          {filteredVerses.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">
+                No verses found matching your criteria
+              </p>
+              <Button variant="link" onClick={clearFilters} className="mt-2">
+                Clear all filters
               </Button>
             </div>
-            <div className="text-sm text-muted-foreground">
-              Page {pagination.currentPage} of {pagination.totalPages} ({pagination.totalVerses} verses)
+          )}
+
+          {/* Pagination */}
+          {pagination.totalPages > 1 && (
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-8">
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={!pagination.hasPrevPage}
+                  size="sm"
+                >
+                  Previous
+                </Button>
+                <div className="flex items-center gap-1">
+                  {Array.from(
+                    { length: Math.min(5, pagination.totalPages) },
+                    (_, i) => {
+                      let pageNum;
+                      if (pagination.totalPages <= 5) {
+                        pageNum = i + 1;
+                      } else if (pagination.currentPage <= 3) {
+                        pageNum = i + 1;
+                      } else if (
+                        pagination.currentPage >=
+                        pagination.totalPages - 2
+                      ) {
+                        pageNum = pagination.totalPages - 4 + i;
+                      } else {
+                        pageNum = pagination.currentPage - 2 + i;
+                      }
+
+                      return (
+                        <Button
+                          key={pageNum}
+                          variant={
+                            pagination.currentPage === pageNum
+                              ? "default"
+                              : "outline"
+                          }
+                          onClick={() => setCurrentPage(pageNum)}
+                          size="sm"
+                          className="w-8 h-8 p-0"
+                        >
+                          {pageNum}
+                        </Button>
+                      );
+                    }
+                  )}
+                </div>
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    setCurrentPage((prev) =>
+                      Math.min(prev + 1, pagination.totalPages)
+                    )
+                  }
+                  disabled={!pagination.hasNextPage}
+                  size="sm"
+                >
+                  Next
+                </Button>
+              </div>
+              <div className="text-sm text-muted-foreground">
+                Page {pagination.currentPage} of {pagination.totalPages} (
+                {pagination.totalVerses} verses)
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the verse
-              and all associated data.
+              This action cannot be undone. This will permanently delete the
+              verse and all associated data.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -551,4 +703,4 @@ export function AllVerses() {
       </AlertDialog>
     </div>
   );
-} 
+}

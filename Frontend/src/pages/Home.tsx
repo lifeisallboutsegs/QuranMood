@@ -211,8 +211,8 @@ export function Home() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <Card className="w-full max-w-4xl mx-auto animate-pulse">
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <Card className="w-full animate-pulse">
           <CardContent className="p-6">
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
               {[...Array(8)].map((_, i) => (
@@ -226,8 +226,8 @@ export function Home() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Card className="w-full max-w-4xl mx-auto">
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <Card className="w-full">
         <CardContent className="p-6">
           <h1 className="text-2xl font-bold text-center mb-8">How are you feeling today?</h1>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">

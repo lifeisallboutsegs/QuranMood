@@ -73,7 +73,7 @@ export function VersePage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto py-8 px-4 max-w-3xl">
+      <div className="container mx-auto py-8 px-4 max-w-4xl">
         <div className="mb-6">
           <div className="h-10 bg-muted rounded w-20 animate-pulse"></div>
         </div>
@@ -149,7 +149,7 @@ export function VersePage() {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-3xl">
+    <div className="container mx-auto py-8 px-4 max-w-4xl">
       <div className="mb-6">
         <Button
           variant="ghost"
@@ -189,3 +189,4 @@ export function VersePage() {
     </div>
   );
 }
+ 

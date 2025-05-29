@@ -88,7 +88,7 @@ export function VerseFormPage() {
 
   if (!user) {
     return (
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
         <Card>
           <CardContent className="p-6">
             <div className="text-center space-y-4">
@@ -106,7 +106,7 @@ export function VerseFormPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
         <Card>
           <CardContent className="p-6">
             <div className="space-y-6 animate-pulse">
@@ -185,8 +185,8 @@ export function VerseFormPage() {
 
   if (!id && !isAI && !isManual) {
     return (
-      <div className="container mx-auto px-4 py-8 max-w-7xl overflow-x-hidden">
-        <Card className="max-w-3xl mx-auto">
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <Card>
           <CardHeader className="space-y-2">
             <CardTitle className="text-2xl md:text-3xl text-center break-words">
               Choose Creation Method
@@ -253,7 +253,7 @@ export function VerseFormPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
       <VerseForm
         verse={verse}
         mode={mode}
@@ -264,3 +264,4 @@ export function VerseFormPage() {
     </div>
   );
 }
+ 
