@@ -201,6 +201,10 @@ export function AllVerses() {
     }
   };
 
+  const isCurrentUser = (userId: string) => {
+    return user?.id === userId;
+  };
+
   if (isLoading) {
     return (
       <div className="container mx-auto py-8 px-4 max-w-3xl">
@@ -374,59 +378,59 @@ export function AllVerses() {
       {/* Verses List */}
       <div className="space-y-6">
         {filteredVerses.map((verse) => (
-          <Card key={verse.id} className="hover:bg-muted/50 transition-colors">
+          <Card key={verse.id} className="overflow-hidden">
             <CardContent className="p-6">
               <div className="space-y-4">
                 <div className="flex justify-between items-start">
-                  <div className="text-sm text-muted-foreground">
-                    Surah {verse.reference.text || verse.reference.surah}, Verse {verse.reference.ayah}
+                  <div>
+                    <h3 className="text-lg font-semibold">
+                      {verse.reference.text} {verse.reference.surah}:{verse.reference.ayah}
+                    </h3>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {verse.mood.map((m) => (
+                        <Badge key={m} className={getRandomColor(m)}>
+                          {m}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
-                  {user && (
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          onClick={() => navigate(`/verse/edit/${verse.id}`)}
-                        >
-                          <Pencil className="h-4 w-4 mr-2" />
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="text-destructive focus:text-destructive"
-                          onClick={() => {
-                            setVerseToDelete(verse);
-                            setIsDeleteDialogOpen(true);
-                          }}
-                        >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  )}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => navigate(`/verse/${verse.id}`)}>
+                        <Eye className="mr-2 h-4 w-4" />
+                        View Details
+                      </DropdownMenuItem>
+                      {user && (
+                        <>
+                          <DropdownMenuItem onClick={() => navigate(`/edit/${verse.id}`)}>
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="text-red-600"
+                            onClick={() => {
+                              setVerseToDelete(verse);
+                              setIsDeleteDialogOpen(true);
+                            }}
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete
+                          </DropdownMenuItem>
+                        </>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
 
-                <div className="text-right text-xl font-arabic leading-loose">
-                  {verse.arabic}
-                </div>
                 <div className="space-y-2">
-                  <p className="text-lg">{verse.english}</p>
+                  <p className="text-2xl font-arabic text-right">{verse.arabic}</p>
+                  <p className="text-muted-foreground">{verse.english}</p>
                   {verse.bangla && <p className="text-muted-foreground">{verse.bangla}</p>}
-                </div>
-
-                <div className="flex flex-wrap gap-2">
-                  {verse.mood.map((mood) => (
-                    <Badge 
-                      key={mood} 
-                      className={`${getRandomColor(mood)} border-0`}
-                    >
-                      {mood}
-                    </Badge>
-                  ))}
                 </div>
 
                 <div className="flex flex-wrap gap-2">
@@ -439,25 +443,17 @@ export function AllVerses() {
 
                 <div className="text-sm text-muted-foreground space-y-1">
                   {verse.created_by && (
-                    <p>Created by {verse.created_by.userName} {formatTimeAgo(verse.created_by.timestamp)}</p>
+                    <p>
+                      Added {formatTimeAgo(verse.created_by.timestamp)} by{" "}
+                      {isCurrentUser(verse.created_by.userId) ? "you" : verse.created_by.userName}
+                    </p>
                   )}
                   {verse.updated_by && (
-                    <p>Last updated by {verse.updated_by.userName} {formatTimeAgo(verse.updated_by.timestamp)}</p>
+                    <p>
+                      Last updated {formatTimeAgo(verse.updated_by.timestamp)} by{" "}
+                      {isCurrentUser(verse.updated_by.userId) ? "you" : verse.updated_by.userName}
+                    </p>
                   )}
-                </div>
-
-                <Separator className="my-4" />
-                
-                <div className="flex justify-end">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => navigate(`/verse/${verse.id}`)}
-                    className="flex items-center gap-2"
-                  >
-                    <Eye className="h-4 w-4" />
-                    View Details
-                  </Button>
                 </div>
               </div>
             </CardContent>
