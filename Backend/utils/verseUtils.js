@@ -176,7 +176,7 @@ const validateSurahVerse = (surah, verse) => {
 };
 
 const validateVerseData = (data) => {
-  const required = ["id", "mood", "arabic", "english"];
+  const required = ["mood", "arabic", "english"];
   const missing = required.filter((field) => !data[field]);
 
   if (missing.length > 0) {
