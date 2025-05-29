@@ -1,7 +1,5 @@
+const Verse = require('../models/Verse');
 const {
-  readVerses,
-  writeVerses,
-  validateVerseId,
   validateSurahVerse,
   validateVerseData,
   scrapeQuranVerse,
@@ -13,24 +11,42 @@ const {
 
 const randomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
+
+const transformVerse = (verse) => {
+  if (!verse) return null;
+  const transformed = verse.toObject ? verse.toObject() : verse;
+  return {
+    ...transformed,
+    id: transformed._id.toString(),
+    _id: undefined
+  };
+};
+
+
+const transformVerses = (verses) => {
+  return verses.map(verse => transformVerse(verse));
+};
+
 exports.getVerseByMood = async (req, res) => {
   try {
-    const verses = await readVerses();
     const mood = req.query.mood?.toLowerCase();
 
-    let filtered = verses;
+    let query = {};
     if (mood) {
-      filtered = verses.filter((v) =>
-        v.mood.some((m) => m.toLowerCase().includes(mood))
-      );
-      if (filtered.length === 0) {
-        return res
-          .status(404)
-          .json({ message: "No verses found for that mood" });
-      }
+      query.mood = { $regex: mood, $options: 'i' };
     }
 
-    res.json({ verse: randomItem(filtered) });
+    const verses = await Verse.find(query).select('_id reference arabic english bangla mood tags context source translation_info created_by updated_by');
+    if (mood && verses.length === 0) {
+      return res.status(404).json({ message: "No verses found for that mood" });
+    }
+
+    const randomVerse = randomItem(verses);
+    if (!randomVerse) {
+      return res.status(404).json({ message: "No verses found" });
+    }
+
+    res.json({ verse: transformVerse(randomVerse) });
   } catch (err) {
     console.error("Error in getVerseByMood:", err);
     res.status(500).json({
@@ -54,13 +70,17 @@ exports.addVerse = async (req, res) => {
     }
 
     const { surahNum, verseNum } = validateSurahVerse(surah, verse);
-    const verses = await readVerses();
     const verseId = `${surahNum}_${verseNum}`;
 
-    if (verses.find((v) => v.id === verseId)) {
+    const existingVerse = await Verse.findOne({
+      'reference.surah': surahNum,
+      'reference.ayah': verseNum
+    });
+
+    if (existingVerse) {
       return res.status(409).json({
         message: "Verse already exists in database",
-        existingVerse: verses.find((v) => v.id === verseId)
+        existingVerse: transformVerse(existingVerse)
       });
     }
 
@@ -90,17 +110,17 @@ exports.addVerse = async (req, res) => {
       enhancedVerse.created_by = {
         userId,
         userName,
-        timestamp: new Date().toISOString()
+        timestamp: new Date()
       };
 
-      verses.push(enhancedVerse);
-      await writeVerses(verses);
+      const verse = new Verse(enhancedVerse);
+      await verse.save();
 
       console.log(`Successfully added verse ${surahNum}:${verseNum}`);
 
       res.status(201).json({
         message: "Verse successfully added with AI enhancement",
-        verse: enhancedVerse,
+        verse: transformVerse(verse),
         enhancement_method: useStreaming === "true" ? "streaming" : "standard"
       });
     } catch (scrapeError) {
@@ -144,7 +164,7 @@ exports.addVerse = async (req, res) => {
 
 exports.addVerseManual = async (req, res) => {
   try {
-    const { userId, userName } = req.body;
+    const { userId, userName, ...verseData } = req.body;
 
     if (!userId || !userName) {
       return res.status(400).json({
@@ -153,31 +173,35 @@ exports.addVerseManual = async (req, res) => {
       });
     }
 
-    validateVerseData(req.body);
+    validateVerseData(verseData);
 
-    const verses = await readVerses();
-    if (verses.find((v) => v.id === req.body.id)) {
+    const existingVerse = await Verse.findOne({
+      'reference.surah': verseData.reference.surah,
+      'reference.ayah': verseData.reference.ayah
+    });
+
+    if (existingVerse) {
       return res.status(409).json({
-        message: "Verse with this ID already exists",
-        existingVerse: verses.find((v) => v.id === req.body.id)
+        message: "Verse with this reference already exists",
+        existingVerse: transformVerse(existingVerse)
       });
     }
 
-    const newVerse = {
-      ...req.body,
-      bangla: req.body.bangla || null,
+    const newVerse = new Verse({
+      ...verseData,
+      bangla: verseData.bangla || null,
       reference: {
-        surah: req.body.reference.surah,
-        ayah: req.body.reference.ayah,
+        surah: verseData.reference.surah,
+        ayah: verseData.reference.ayah,
         text:
-          req.body.reference.text ||
-          SURAH_NAMES[req.body.reference.surah] ||
+          verseData.reference.text ||
+          SURAH_NAMES[verseData.reference.surah] ||
           "Unknown"
       },
-      source: req.body.source || "Manual entry",
-      tags: req.body.tags || ["quran"],
-      context: req.body.context || "Context not provided",
-      translation_info: req.body.translation_info || {
+      source: verseData.source || "Manual entry",
+      tags: verseData.tags || ["quran"],
+      context: verseData.context || "Context not provided",
+      translation_info: verseData.translation_info || {
         english_translator: userName || "Unknown",
         bangla_translator: userName || "Manual entry",
         language: "multi"
@@ -185,18 +209,17 @@ exports.addVerseManual = async (req, res) => {
       created_by: {
         userId,
         userName,
-        timestamp: new Date().toISOString()
+        timestamp: new Date()
       }
-    };
+    });
 
-    verses.push(newVerse);
-    await writeVerses(verses);
+    await newVerse.save();
 
-    console.log(`Manually added verse with ID: ${newVerse.id}`);
+    console.log(`Manually added verse with reference: ${newVerse.reference.surah}:${newVerse.reference.ayah}`);
 
     res.status(201).json({
       message: "Verse added manually",
-      verse: newVerse
+      verse: transformVerse(newVerse)
     });
   } catch (err) {
     console.error("Error in addVerseManual:", err);
@@ -219,28 +242,24 @@ exports.editVerse = async (req, res) => {
       });
     }
 
-    validateVerseId(id);
     validateVerseData(updates);
 
-    const verses = await readVerses();
-    const index = verses.findIndex((v) => v.id === id);
-
-    if (index === -1) {
+    const verse = await Verse.findById(id);
+    if (!verse) {
       return res.status(404).json({
         message: "Verse not found",
-        searchedId: id,
-        availableIds: verses.slice(0, 5).map((v) => v.id)
+        searchedId: id
       });
     }
 
-    const originalVerse = { ...verses[index] };
+    const originalVerse = verse.toObject();
     const updatedVerse = {
       ...originalVerse,
       ...updates,
       updated_by: {
         userId,
         userName,
-        timestamp: new Date().toISOString()
+        timestamp: new Date()
       }
     };
 
@@ -262,14 +281,17 @@ exports.editVerse = async (req, res) => {
       });
     }
 
-    verses[index] = updatedVerse;
-    await writeVerses(verses);
+    const result = await Verse.findByIdAndUpdate(
+      id,
+      { $set: updatedVerse },
+      { new: true }
+    );
 
     console.log(`Updated verse with ID: ${id}`);
 
     res.json({
       message: "Verse updated successfully",
-      verse: updatedVerse,
+      verse: transformVerse(result),
       changes: Object.keys(updates).filter(
         (key) => updates[key] !== originalVerse[key]
       )
@@ -295,38 +317,31 @@ exports.deleteVerse = async (req, res) => {
       });
     }
 
-    validateVerseId(id);
-
-    const verses = await readVerses();
-    const index = verses.findIndex((v) => v.id === id);
-
-    if (index === -1) {
+    const verse = await Verse.findById(id);
+    if (!verse) {
       return res.status(404).json({
         message: "Verse not found",
-        searchedId: id,
-        availableIds: verses.slice(0, 5).map((v) => v.id)
+        searchedId: id
       });
     }
 
-    const deletedVerse = verses[index];
-    verses.splice(index, 1);
-    await writeVerses(verses);
+    await Verse.findByIdAndDelete(id);
 
     console.log(`Deleted verse with ID: ${id} by user ${userName}`);
 
     res.json({
       message: "Verse deleted successfully",
       deletedVerse: {
-        id: deletedVerse.id,
-        reference: deletedVerse.reference,
-        english: deletedVerse.english?.substring(0, 50) + "...",
+        id: verse._id.toString(),
+        reference: verse.reference,
+        english: verse.english?.substring(0, 50) + "...",
         deleted_by: {
           userId,
           userName,
-          timestamp: new Date().toISOString()
+          timestamp: new Date()
         }
       },
-      remainingCount: verses.length
+      remainingCount: await Verse.countDocuments()
     });
   } catch (err) {
     console.error("Error in deleteVerse:", err);
@@ -339,21 +354,24 @@ exports.deleteVerse = async (req, res) => {
 
 exports.getAllVerses = async (req, res) => {
   try {
-    const verses = await readVerses();
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-    const offset = (page - 1) * limit;
+    const skip = (page - 1) * limit;
 
-    const paginatedVerses = verses.slice(offset, offset + limit);
+    const totalVerses = await Verse.countDocuments();
+    const verses = await Verse.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
     res.json({
-      verses: paginatedVerses,
+      verses: transformVerses(verses),
       pagination: {
         currentPage: page,
-        totalPages: Math.ceil(verses.length / limit),
-        totalVerses: verses.length,
+        totalPages: Math.ceil(totalVerses / limit),
+        totalVerses,
         versesPerPage: limit,
-        hasNextPage: offset + limit < verses.length,
+        hasNextPage: skip + limit < totalVerses,
         hasPrevPage: page > 1
       }
     });
@@ -369,11 +387,15 @@ exports.getAllVerses = async (req, res) => {
 exports.getVerseById = async (req, res) => {
   try {
     const id = req.params.id;
-    validateVerseId(id);
+    
+    if (!id) {
+      return res.status(400).json({
+        message: "Verse ID is required",
+        error: "No ID provided"
+      });
+    }
 
-    const verses = await readVerses();
-    const verse = verses.find((v) => v.id === id);
-
+    const verse = await Verse.findById(id);
     if (!verse) {
       return res.status(404).json({
         message: "Verse not found",
@@ -381,11 +403,17 @@ exports.getVerseById = async (req, res) => {
       });
     }
 
-    res.json({ verse });
+    res.json({ verse: transformVerse(verse) });
   } catch (err) {
     console.error("Error in getVerseById:", err);
-    res.status(err.message.includes("required") ? 400 : 500).json({
-      message: err.message || "Error fetching verse",
+    if (err.name === 'CastError') {
+      return res.status(400).json({
+        message: "Invalid verse ID format",
+        error: "The provided ID is not a valid MongoDB ObjectId"
+      });
+    }
+    res.status(500).json({
+      message: "Error fetching verse",
       error: err.message
     });
   }
@@ -393,7 +421,6 @@ exports.getVerseById = async (req, res) => {
 
 exports.getVersesByTag = async (req, res) => {
   try {
-    const verses = await readVerses();
     const tag = req.query.tag?.toLowerCase();
 
     if (!tag) {
@@ -403,24 +430,22 @@ exports.getVersesByTag = async (req, res) => {
       });
     }
 
-    const filtered = verses.filter((v) =>
-      v.tags?.some((t) => t.toLowerCase().includes(tag))
-    );
+    const verses = await Verse.find({
+      tags: { $regex: tag, $options: 'i' }
+    });
 
-    if (filtered.length === 0) {
+    if (verses.length === 0) {
+      const allTags = await Verse.distinct('tags');
       return res.status(404).json({
         message: "No verses found for that tag",
         searchedTag: tag,
-        availableTags: [...new Set(verses.flatMap((v) => v.tags || []))].slice(
-          0,
-          10
-        )
+        availableTags: allTags.slice(0, 10)
       });
     }
 
     res.json({
-      verses: filtered,
-      count: filtered.length,
+      verses: transformVerses(verses),
+      count: verses.length,
       searchedTag: tag
     });
   } catch (err) {
@@ -434,8 +459,7 @@ exports.getVersesByTag = async (req, res) => {
 
 exports.getMoods = async (req, res) => {
   try {
-    const verses = await readVerses();
-    const allMoods = verses.flatMap((verse) => verse.mood || []);
+    const allMoods = await Verse.distinct('mood');
     const uniqueMoods = [...new Set(allMoods)];
 
     const randomMoods = uniqueMoods
@@ -450,6 +474,19 @@ exports.getMoods = async (req, res) => {
     console.error("Error in getMoods:", err);
     res.status(500).json({
       message: "Error fetching moods",
+      error: err.message
+    });
+  }
+};
+
+exports.getTags = async (req, res) => {
+  try {
+    const tags = await Verse.distinct('tags');
+    res.json({ tags });
+  } catch (err) {
+    console.error("Error in getTags:", err);
+    res.status(500).json({
+      message: "Error fetching tags",
       error: err.message
     });
   }

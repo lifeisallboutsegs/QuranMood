@@ -1,4 +1,4 @@
-const { writeContact } = require("../utils/contactUtils");
+const Contact = require('../models/Contact');
 
 exports.submitContact = async (req, res) => {
   try {
@@ -19,25 +19,23 @@ exports.submitContact = async (req, res) => {
       });
     }
 
-    const contactData = {
-      id: Date.now().toString(),
+    const contact = new Contact({
       name,
       email,
       subject,
       message,
-      createdAt: new Date().toISOString(),
-      status: "new"
-    };
+      status: 'new'
+    });
 
-    await writeContact(contactData);
+    await contact.save();
 
     res.status(201).json({
       message: "Contact message received successfully",
       contact: {
-        id: contactData.id,
-        name: contactData.name,
-        subject: contactData.subject,
-        createdAt: contactData.createdAt
+        id: contact._id,
+        name: contact.name,
+        subject: contact.subject,
+        createdAt: contact.createdAt
       }
     });
   } catch (err) {

@@ -13,20 +13,18 @@ const {
 } = require("../controllers/verseController");
 
 
-router.get("/random/:mood", getVerseByMood);
+router.get("/all", getAllVerses);
 router.get("/moods", getMoods);
 router.get("/search/tag", getVersesByTag);
-router.get("/all", getAllVerses);
-router.get("/:id", getVerseById);
+router.get("/random/:mood", getVerseByMood);
 
 
-router.post("/add/:surah/:verse", addVerse);
 router.post("/manual", addVerseManual);
+router.post("/add/:surah/:verse", addVerse);
 
 
+router.get("/:id", getVerseById);
 router.put("/:id", editVerse);
-
-
 router.delete("/:id", deleteVerse);
 
 module.exports = router;

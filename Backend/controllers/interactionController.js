@@ -1,49 +1,49 @@
-const {
-  readInteractions,
-  writeInteractions,
-  validateUserInput,
-  validateVerseInput,
-  validateCommentInput,
-  findLike,
-  findComment,
-  createLike,
-  createComment,
-  formatLikeResponse,
-  formatCommentResponse
-} = require("../utils/interactionUtils");
+const Interaction = require('../models/Interaction');
 
 exports.toggleLike = async (req, res) => {
   try {
     const { verseId } = req.params;
     const { userId, userName } = req.body;
 
-    validateVerseInput(verseId);
-    validateUserInput(userId, userName);
-
-    const interactions = await readInteractions();
-    const likeIndex = findLike(interactions, verseId, userId);
-
-    if (likeIndex === -1) {
-   
-      interactions.likes.push(createLike(verseId, userId, userName));
-    } else {
-    
-      interactions.likes.splice(likeIndex, 1);
+    if (!verseId || !userId || !userName) {
+      return res.status(400).json({
+        message: "Verse ID, user ID, and user name are required"
+      });
     }
 
-    await writeInteractions(interactions);
+    const existingLike = await Interaction.findOne({
+      verseId,
+      userId,
+      type: 'like'
+    });
 
-    const verseLikes = interactions.likes.filter(
-      (like) => like.verseId === verseId
-    );
+    if (existingLike) {
+      await Interaction.findByIdAndDelete(existingLike._id);
+      const likes = await Interaction.countDocuments({ verseId, type: 'like' });
+      return res.json({
+        message: "Like removed",
+        likes
+      });
+    }
+
+    const like = new Interaction({
+      verseId,
+      userId,
+      userName,
+      type: 'like'
+    });
+
+    await like.save();
+    const likes = await Interaction.countDocuments({ verseId, type: 'like' });
+
     res.json({
-      message: likeIndex === -1 ? "Verse liked" : "Like removed",
-      likes: verseLikes.length
+      message: "Verse liked",
+      likes
     });
   } catch (err) {
     console.error("Error in toggleLike:", err);
-    res.status(err.message.includes("required") ? 400 : 500).json({
-      message: err.message || "Error toggling like",
+    res.status(500).json({
+      message: "Error toggling like",
       error: err.message
     });
   }
@@ -52,16 +52,28 @@ exports.toggleLike = async (req, res) => {
 exports.getLikes = async (req, res) => {
   try {
     const { verseId } = req.params;
-    validateVerseInput(verseId);
 
-    const interactions = await readInteractions();
-    const likes = interactions.likes.filter((like) => like.verseId === verseId);
+    if (!verseId) {
+      return res.status(400).json({
+        message: "Verse ID is required"
+      });
+    }
 
-    res.json(formatLikeResponse(likes));
+    const likes = await Interaction.find({ verseId, type: 'like' })
+      .sort({ createdAt: -1 });
+
+    res.json({
+      count: likes.length,
+      likes: likes.map(like => ({
+        userId: like.userId,
+        userName: like.userName,
+        createdAt: like.createdAt
+      }))
+    });
   } catch (err) {
     console.error("Error in getLikes:", err);
-    res.status(err.message.includes("required") ? 400 : 500).json({
-      message: err.message || "Error fetching likes",
+    res.status(500).json({
+      message: "Error fetching likes",
       error: err.message
     });
   }
@@ -72,24 +84,36 @@ exports.addComment = async (req, res) => {
     const { verseId } = req.params;
     const { userId, userName, content } = req.body;
 
-    validateVerseInput(verseId);
-    validateUserInput(userId, userName);
-    validateCommentInput(content);
+    if (!verseId || !userId || !userName || !content) {
+      return res.status(400).json({
+        message: "Verse ID, user ID, user name, and content are required"
+      });
+    }
 
-    const interactions = await readInteractions();
-    const newComment = createComment(verseId, userId, userName, content);
+    const comment = new Interaction({
+      verseId,
+      userId,
+      userName,
+      type: 'comment',
+      content
+    });
 
-    interactions.comments.push(newComment);
-    await writeInteractions(interactions);
+    await comment.save();
 
     res.status(201).json({
       message: "Comment added successfully",
-      comment: newComment
+      comment: {
+        id: comment._id,
+        userId: comment.userId,
+        userName: comment.userName,
+        content: comment.content,
+        createdAt: comment.createdAt
+      }
     });
   } catch (err) {
     console.error("Error in addComment:", err);
-    res.status(err.message.includes("required") ? 400 : 500).json({
-      message: err.message || "Error adding comment",
+    res.status(500).json({
+      message: "Error adding comment",
       error: err.message
     });
   }
@@ -98,20 +122,29 @@ exports.addComment = async (req, res) => {
 exports.getComments = async (req, res) => {
   try {
     const { verseId } = req.params;
-    validateVerseInput(verseId);
 
-    const interactions = await readInteractions();
-    const comments = interactions.comments
-      .filter((comment) => comment.verseId === verseId)
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    if (!verseId) {
+      return res.status(400).json({
+        message: "Verse ID is required"
+      });
+    }
+
+    const comments = await Interaction.find({ verseId, type: 'comment' })
+      .sort({ createdAt: -1 });
 
     res.json({
-      comments: formatCommentResponse(comments)
+      comments: comments.map(comment => ({
+        id: comment._id,
+        userId: comment.userId,
+        userName: comment.userName,
+        content: comment.content,
+        createdAt: comment.createdAt
+      }))
     });
   } catch (err) {
     console.error("Error in getComments:", err);
-    res.status(err.message.includes("required") ? 400 : 500).json({
-      message: err.message || "Error fetching comments",
+    res.status(500).json({
+      message: "Error fetching comments",
       error: err.message
     });
   }
@@ -122,30 +155,33 @@ exports.deleteComment = async (req, res) => {
     const { commentId } = req.params;
     const { userId } = req.body;
 
-    validateUserInput(userId, "dummy"); // We only need userId for deletion
-    if (!commentId) {
-      throw new Error("Comment ID is required");
+    if (!commentId || !userId) {
+      return res.status(400).json({
+        message: "Comment ID and user ID are required"
+      });
     }
 
-    const interactions = await readInteractions();
-    const commentIndex = findComment(interactions, commentId, userId);
+    const comment = await Interaction.findOne({
+      _id: commentId,
+      userId,
+      type: 'comment'
+    });
 
-    if (commentIndex === -1) {
+    if (!comment) {
       return res.status(404).json({
         message: "Comment not found or unauthorized"
       });
     }
 
-    interactions.comments.splice(commentIndex, 1);
-    await writeInteractions(interactions);
+    await Interaction.findByIdAndDelete(commentId);
 
     res.json({
       message: "Comment deleted successfully"
     });
   } catch (err) {
     console.error("Error in deleteComment:", err);
-    res.status(err.message.includes("required") ? 400 : 500).json({
-      message: err.message || "Error deleting comment",
+    res.status(500).json({
+      message: "Error deleting comment",
       error: err.message
     });
   }
@@ -156,37 +192,41 @@ exports.editComment = async (req, res) => {
     const { commentId } = req.params;
     const { userId, content } = req.body;
 
-    validateUserInput(userId, "dummy");
-    validateCommentInput(content);
-    if (!commentId) {
-      throw new Error("Comment ID is required");
+    if (!commentId || !userId || !content) {
+      return res.status(400).json({
+        message: "Comment ID, user ID, and content are required"
+      });
     }
 
-    const interactions = await readInteractions();
-    const commentIndex = findComment(interactions, commentId, userId);
+    const comment = await Interaction.findOne({
+      _id: commentId,
+      userId,
+      type: 'comment'
+    });
 
-    if (commentIndex === -1) {
+    if (!comment) {
       return res.status(404).json({
         message: "Comment not found or unauthorized"
       });
     }
 
-    interactions.comments[commentIndex] = {
-      ...interactions.comments[commentIndex],
-      content,
-      updatedAt: new Date().toISOString()
-    };
-
-    await writeInteractions(interactions);
+    comment.content = content;
+    await comment.save();
 
     res.json({
       message: "Comment updated successfully",
-      comment: formatCommentResponse([interactions.comments[commentIndex]])[0]
+      comment: {
+        id: comment._id,
+        userId: comment.userId,
+        userName: comment.userName,
+        content: comment.content,
+        createdAt: comment.createdAt
+      }
     });
   } catch (err) {
     console.error("Error in editComment:", err);
-    res.status(err.message.includes("required") ? 400 : 500).json({
-      message: err.message || "Error editing comment",
+    res.status(500).json({
+      message: "Error editing comment",
       error: err.message
     });
   }

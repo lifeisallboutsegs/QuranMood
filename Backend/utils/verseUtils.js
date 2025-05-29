@@ -1,15 +1,11 @@
-const fs = require("fs").promises;
-const path = require("path");
 const axios = require("axios");
 const cheerio = require("cheerio");
 const { GoogleGenAI, Type } = require("@google/genai");
 
-const API_KEY = "AIzaSyDnWxN9ZCzHTyOHSvYRzgbGXATu_B2h2Sg";
+const API_KEY = "";
 const ai = new GoogleGenAI({
-  apiKey: API_KEY || process.env.GEMINI_API_KEY
+  apiKey: process.env.GEMINI_API_KEY || API_KEY
 });
-
-const FILE_PATH = path.join(__dirname, "../data/verses.json");
 
 const SURAH_NAMES = {
   1: "Al-Fatihah (The Opening)",
@@ -130,30 +126,6 @@ const SURAH_NAMES = {
 
 const getSurahNameByID = (id) => {
   return SURAH_NAMES[id] || null;
-};
-
-const readVerses = async () => {
-  try {
-    const data = await fs.readFile(FILE_PATH, "utf8");
-    return JSON.parse(data);
-  } catch (error) {
-    if (error.code === "ENOENT") {
-      const defaultData = [];
-      await fs.writeFile(FILE_PATH, JSON.stringify(defaultData, null, 2));
-      return defaultData;
-    }
-    throw error;
-  }
-};
-
-const writeVerses = async (verses) => {
-  await fs.writeFile(FILE_PATH, JSON.stringify(verses, null, 2));
-};
-
-const validateVerseId = (id) => {
-  if (!id) {
-    throw new Error("Verse ID is required");
-  }
 };
 
 const validateSurahVerse = (surah, verse) => {
@@ -280,16 +252,15 @@ Keep the response concise but meaningful.
     }
 
     return {
-      id: `${surah}_${verse}`,
-      mood: enhancedData.mood || ["guidance"],
-      arabic: scrapedData.arabic,
-      english: scrapedData.english,
-      bangla: enhancedData.bangla || "Translation not available",
       reference: {
         surah: parseInt(surah),
         ayah: parseInt(verse),
         text: scrapedData.surahName
       },
+      mood: enhancedData.mood || ["guidance"],
+      arabic: scrapedData.arabic,
+      english: scrapedData.english,
+      bangla: enhancedData.bangla || "Translation not available",
       source: scrapedData.url,
       tags: enhancedData.tags || ["quran"],
       context: enhancedData.context || "Context not available",
@@ -297,8 +268,7 @@ Keep the response concise but meaningful.
         english_translator: "From source",
         bangla_translator: "Gemini AI",
         language: "multi"
-      },
-      created_at: new Date().toISOString()
+      }
     };
   } catch (error) {
     console.error("Error enhancing with Gemini:", error.message);
@@ -307,9 +277,6 @@ Keep the response concise but meaningful.
 };
 
 module.exports = {
-  readVerses,
-  writeVerses,
-  validateVerseId,
   validateSurahVerse,
   validateVerseData,
   scrapeQuranVerse,
