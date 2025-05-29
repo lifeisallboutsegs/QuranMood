@@ -39,7 +39,7 @@ exports.getVerseByMood = async (req, res) => {
     const verses = await Verse.find(query).select('_id reference arabic english bangla mood tags context source translation_info created_by updated_by');
     if (mood && verses.length === 0) {
       return res.status(404).json({ message: "No verses found for that mood" });
-    }
+      }
 
     const randomVerse = randomItem(verses);
     if (!randomVerse) {
@@ -64,8 +64,8 @@ exports.addVerse = async (req, res) => {
 
     if (!userId || !userName) {
       return res.status(400).json({
-        message: "User information is required",
-        error: "userId and userName are required"
+        message: "Please log in to add verses",
+        error: "Authentication required"
       });
     }
 
@@ -79,7 +79,8 @@ exports.addVerse = async (req, res) => {
 
     if (existingVerse) {
       return res.status(409).json({
-        message: "Verse already exists in database",
+        message: `Verse ${surahNum}:${verseNum} already exists in the database`,
+        error: "Duplicate verse",
         existingVerse: transformVerse(existingVerse)
       });
     }
@@ -90,9 +91,9 @@ exports.addVerse = async (req, res) => {
 
       if (!scrapedData.arabic || !scrapedData.english) {
         return res.status(404).json({
-          message:
-            "Could not scrape verse data. Verse may not exist or the website structure may have changed.",
-          scrapedData
+          message: `Could not find verse ${surahNum}:${verseNum}. Please check if the verse number is correct.`,
+          error: "Verse not found",
+          suggestion: "Try a different verse number"
         });
       }
 
@@ -128,36 +129,32 @@ exports.addVerse = async (req, res) => {
 
       if (scrapeError.message.includes("Failed to scrape")) {
         return res.status(404).json({
-          message:
-            "Could not access the verse. Please check if the surah and verse numbers are correct.",
-          error: scrapeError.message,
-          suggestion:
-            "Try a different verse or check if the website is accessible."
+          message: `Could not access verse ${surahNum}:${verseNum}. Please check if the verse number is correct.`,
+          error: "Verse not found",
+          suggestion: "Try a different verse number"
         });
       }
 
-      if (
-        scrapeError.message.includes("AI service") ||
-        scrapeError.message.includes("Gemini")
-      ) {
+      if (scrapeError.message.includes("AI service") || scrapeError.message.includes("Gemini")) {
         return res.status(503).json({
           message: "AI enhancement service is currently unavailable",
-          error: scrapeError.message,
-          suggestion:
-            "The verse data was scraped but AI enhancement failed. You can try again later or add the verse manually."
+          error: "Service unavailable",
+          suggestion: "Try again later or add the verse manually"
         });
       }
 
       return res.status(500).json({
-        message: "Error processing verse",
-        error: scrapeError.message
+        message: "An error occurred while processing the verse",
+        error: "Processing error",
+        details: scrapeError.message
       });
     }
   } catch (err) {
     console.error("Error in addVerse:", err);
     res.status(500).json({
-      message: "Error adding verse",
-      error: err.message
+      message: "Failed to add verse",
+      error: "Server error",
+      details: err.message
     });
   }
 };
@@ -168,8 +165,8 @@ exports.addVerseManual = async (req, res) => {
 
     if (!userId || !userName) {
       return res.status(400).json({
-        message: "User information is required",
-        error: "userId and userName are required"
+        message: "Please log in to add verses",
+        error: "Authentication required"
       });
     }
 
@@ -182,7 +179,8 @@ exports.addVerseManual = async (req, res) => {
 
     if (existingVerse) {
       return res.status(409).json({
-        message: "Verse with this reference already exists",
+        message: `Verse ${verseData.reference.surah}:${verseData.reference.ayah} already exists in the database`,
+        error: "Duplicate verse",
         existingVerse: transformVerse(existingVerse)
       });
     }
@@ -223,9 +221,17 @@ exports.addVerseManual = async (req, res) => {
     });
   } catch (err) {
     console.error("Error in addVerseManual:", err);
-    res.status(err.message.includes("required") ? 400 : 500).json({
-      message: err.message || "Error adding verse",
-      error: err.message
+    if (err.message.includes("required")) {
+      return res.status(400).json({
+        message: "Please fill in all required fields",
+        error: "Validation error",
+        details: err.message
+      });
+    }
+    res.status(500).json({
+      message: "Failed to add verse",
+      error: "Server error",
+      details: err.message
     });
   }
 };
@@ -237,8 +243,8 @@ exports.editVerse = async (req, res) => {
 
     if (!userId || !userName) {
       return res.status(400).json({
-        message: "User information is required",
-        error: "userId and userName are required"
+        message: "Please log in to edit verses",
+        error: "Authentication required"
       });
     }
 
@@ -248,6 +254,7 @@ exports.editVerse = async (req, res) => {
     if (!verse) {
       return res.status(404).json({
         message: "Verse not found",
+        error: "Not found",
         searchedId: id
       });
     }
@@ -298,9 +305,17 @@ exports.editVerse = async (req, res) => {
     });
   } catch (err) {
     console.error("Error in editVerse:", err);
-    res.status(err.message.includes("required") ? 400 : 500).json({
-      message: err.message || "Error updating verse",
-      error: err.message
+    if (err.message.includes("required")) {
+      return res.status(400).json({
+        message: "Please fill in all required fields",
+        error: "Validation error",
+        details: err.message
+      });
+    }
+    res.status(500).json({
+      message: "Failed to update verse",
+      error: "Server error",
+      details: err.message
     });
   }
 };
@@ -312,8 +327,8 @@ exports.deleteVerse = async (req, res) => {
 
     if (!userId || !userName) {
       return res.status(400).json({
-        message: "User information is required",
-        error: "userId and userName are required"
+        message: "Please log in to delete verses",
+        error: "Authentication required"
       });
     }
 
@@ -321,6 +336,7 @@ exports.deleteVerse = async (req, res) => {
     if (!verse) {
       return res.status(404).json({
         message: "Verse not found",
+        error: "Not found",
         searchedId: id
       });
     }
@@ -345,9 +361,10 @@ exports.deleteVerse = async (req, res) => {
     });
   } catch (err) {
     console.error("Error in deleteVerse:", err);
-    res.status(err.message.includes("required") ? 400 : 500).json({
-      message: err.message || "Error deleting verse",
-      error: err.message
+    res.status(500).json({
+      message: "Failed to delete verse",
+      error: "Server error",
+      details: err.message
     });
   }
 };

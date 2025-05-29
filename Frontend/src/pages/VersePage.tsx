@@ -50,14 +50,21 @@ export function VersePage() {
         const response = await fetch(
           `${import.meta.env.VITE_API_URL}/api/verse/${id}`
         );
-        if (!response.ok) {
-          throw new Error("Failed to fetch verse");
-        }
         const data = await response.json();
+
+        if (!response.ok) {
+          if (response.status === 404) {
+            toast.error(data.message || "Verse not found");
+            navigate("/");
+            return;
+          }
+          throw new Error(data.message || "Failed to fetch verse");
+        }
+
         setVerse(data.verse);
       } catch (error) {
         console.error("Error fetching verse:", error);
-        toast.error("Failed to load verse");
+        toast.error(error instanceof Error ? error.message : "Failed to load verse");
         navigate("/");
       } finally {
         setIsLoading(false);

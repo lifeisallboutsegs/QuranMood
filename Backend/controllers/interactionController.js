@@ -7,7 +7,8 @@ exports.toggleLike = async (req, res) => {
 
     if (!verseId || !userId || !userName) {
       return res.status(400).json({
-        message: "Verse ID, user ID, and user name are required"
+        message: "Please log in to like verses",
+        error: "Authentication required"
       });
     }
 
@@ -37,14 +38,15 @@ exports.toggleLike = async (req, res) => {
     const likes = await Interaction.countDocuments({ verseId, type: 'like' });
 
     res.json({
-      message: "Verse liked",
+      message: "Verse liked successfully",
       likes
     });
   } catch (err) {
     console.error("Error in toggleLike:", err);
     res.status(500).json({
-      message: "Error toggling like",
-      error: err.message
+      message: "Failed to update like status",
+      error: "Server error",
+      details: err.message
     });
   }
 };
@@ -86,7 +88,8 @@ exports.addComment = async (req, res) => {
 
     if (!verseId || !userId || !userName || !content) {
       return res.status(400).json({
-        message: "Verse ID, user ID, user name, and content are required"
+        message: "Please log in and provide a comment",
+        error: "Missing required fields"
       });
     }
 
@@ -113,8 +116,9 @@ exports.addComment = async (req, res) => {
   } catch (err) {
     console.error("Error in addComment:", err);
     res.status(500).json({
-      message: "Error adding comment",
-      error: err.message
+      message: "Failed to add comment",
+      error: "Server error",
+      details: err.message
     });
   }
 };
@@ -157,7 +161,8 @@ exports.deleteComment = async (req, res) => {
 
     if (!commentId || !userId) {
       return res.status(400).json({
-        message: "Comment ID and user ID are required"
+        message: "Please log in to delete comments",
+        error: "Authentication required"
       });
     }
 
@@ -169,7 +174,8 @@ exports.deleteComment = async (req, res) => {
 
     if (!comment) {
       return res.status(404).json({
-        message: "Comment not found or unauthorized"
+        message: "Comment not found or you don't have permission to delete it",
+        error: "Not found or unauthorized"
       });
     }
 
@@ -181,8 +187,9 @@ exports.deleteComment = async (req, res) => {
   } catch (err) {
     console.error("Error in deleteComment:", err);
     res.status(500).json({
-      message: "Error deleting comment",
-      error: err.message
+      message: "Failed to delete comment",
+      error: "Server error",
+      details: err.message
     });
   }
 };
@@ -194,7 +201,8 @@ exports.editComment = async (req, res) => {
 
     if (!commentId || !userId || !content) {
       return res.status(400).json({
-        message: "Comment ID, user ID, and content are required"
+        message: "Please log in and provide comment content",
+        error: "Missing required fields"
       });
     }
 
@@ -206,7 +214,8 @@ exports.editComment = async (req, res) => {
 
     if (!comment) {
       return res.status(404).json({
-        message: "Comment not found or unauthorized"
+        message: "Comment not found or you don't have permission to edit it",
+        error: "Not found or unauthorized"
       });
     }
 
@@ -226,8 +235,9 @@ exports.editComment = async (req, res) => {
   } catch (err) {
     console.error("Error in editComment:", err);
     res.status(500).json({
-      message: "Error editing comment",
-      error: err.message
+      message: "Failed to update comment",
+      error: "Server error",
+      details: err.message
     });
   }
 };

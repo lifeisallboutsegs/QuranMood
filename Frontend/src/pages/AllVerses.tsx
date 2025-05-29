@@ -130,10 +130,11 @@ export function AllVerses() {
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/verse/all?limit=1000`
       );
-      if (!response.ok) {
-        throw new Error("Failed to fetch all verses for filters");
-      }
       const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to fetch verses for filters");
+      }
 
       const moods = Array.from(
         new Set(data.verses?.flatMap((verse: Verse) => verse.mood || []) || [])
@@ -146,6 +147,7 @@ export function AllVerses() {
       setAllAvailableTags(tags);
     } catch (error) {
       console.error("Error fetching moods and tags:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to load filters");
       setAllAvailableMoods([]);
       setAllAvailableTags([]);
     }
@@ -166,16 +168,18 @@ export function AllVerses() {
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/verse/all?${queryParams}`
       );
-      if (!response.ok) {
-        throw new Error("Failed to fetch verses");
-      }
       const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to fetch verses");
+      }
+
       setVerses(data.verses || []);
       setFilteredVerses(data.verses || []);
       setPagination(data.pagination);
     } catch (error) {
       console.error("Error fetching verses:", error);
-      toast.error("Failed to load verses");
+      toast.error(error instanceof Error ? error.message : "Failed to load verses");
       setVerses([]);
       setFilteredVerses([]);
     } finally {
@@ -221,19 +225,28 @@ export function AllVerses() {
           })
         }
       );
+      const data = await response.json();
 
       if (!response.ok) {
-        throw new Error("Failed to delete verse");
+        if (response.status === 404) {
+          toast.error(data.message || "Verse not found");
+          return;
+        }
+        if (response.status === 400) {
+          toast.error(data.message || "Please log in to delete verses");
+          return;
+        }
+        throw new Error(data.message || "Failed to delete verse");
       }
 
       setVerses((prev) => prev.filter((v) => v.id !== verse.id));
       setFilteredVerses((prev) => prev.filter((v) => v.id !== verse.id));
-      toast.success("Verse deleted successfully");
+      toast.success(data.message || "Verse deleted successfully");
 
       fetchAllMoodsAndTags();
     } catch (error) {
       console.error("Error deleting verse:", error);
-      toast.error("Failed to delete verse");
+      toast.error(error instanceof Error ? error.message : "Failed to delete verse");
     } finally {
       setIsDeleteDialogOpen(false);
       setVerseToDelete(null);

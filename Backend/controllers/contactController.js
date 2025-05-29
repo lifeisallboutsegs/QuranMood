@@ -6,16 +6,18 @@ exports.submitContact = async (req, res) => {
 
     if (!name || !email || !subject || !message) {
       return res.status(400).json({
-        message: "All fields are required",
-        error: "Missing required fields"
+        message: "Please fill in all required fields",
+        error: "Missing required fields",
+        details: "Name, email, subject, and message are required"
       });
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({
-        message: "Invalid email format",
-        error: "Email validation failed"
+        message: "Please enter a valid email address",
+        error: "Invalid email format",
+        details: "The email address format is incorrect"
       });
     }
 
@@ -30,7 +32,7 @@ exports.submitContact = async (req, res) => {
     await contact.save();
 
     res.status(201).json({
-      message: "Contact message received successfully",
+      message: "Message sent successfully. We'll get back to you soon.",
       contact: {
         id: contact._id,
         name: contact.name,
@@ -41,8 +43,9 @@ exports.submitContact = async (req, res) => {
   } catch (err) {
     console.error("Error in submitContact:", err);
     res.status(500).json({
-      message: "Error submitting contact form",
-      error: err.message
+      message: "Failed to send message",
+      error: "Server error",
+      details: err.message
     });
   }
 };

@@ -73,16 +73,31 @@ export function VerseFormPage() {
         body: JSON.stringify(data)
       });
 
-      if (!response.ok) throw new Error(`Failed to ${mode} verse`);
-
       const result = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 409) {
+          toast.error(result.message || "This verse already exists in the database");
+          return;
+        }
+        if (response.status === 404) {
+          toast.error(result.message || "Verse not found");
+          return;
+        }
+        if (response.status === 503) {
+          toast.error(result.message || "AI service is currently unavailable");
+          return;
+        }
+        throw new Error(result.message || `Failed to ${mode} verse`);
+      }
+
       toast.success(
         `Verse ${mode === "create" ? "created" : "updated"} successfully`
       );
       navigate(`/verse/${result.verse.id}`);
     } catch (error) {
       console.error(`Error ${mode}ing verse:`, error);
-      throw error;
+      toast.error(error instanceof Error ? error.message : "An unexpected error occurred");
     }
   };
 

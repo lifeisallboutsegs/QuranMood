@@ -132,12 +132,12 @@ export function Home() {
     const fetchMoods = async () => {
       try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/verse/moods`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch moods');
-        }
         const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Failed to fetch moods');
+        }
         
-       
         const transformedMoods = data.moods.map((mood: string) => {
           const hash = mood.split("").reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
           const colorIndex = hash % colorSets.length;
@@ -154,7 +154,7 @@ export function Home() {
         setMoods(transformedMoods);
       } catch (error) {
         console.error("Error fetching moods:", error);
-        toast.error("Failed to load moods");
+        toast.error(error instanceof Error ? error.message : "Failed to load moods");
       } finally {
         setIsLoading(false);
       }
@@ -167,10 +167,16 @@ export function Home() {
     setSelectedMood(mood);
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/verse/random/${mood}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch verse');
-      }
       const data = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          toast.error(data.message || "No verse found for this mood");
+          return;
+        }
+        throw new Error(data.message || 'Failed to fetch verse');
+      }
+
       if (data.verse) {
         navigate(`/verse/${data.verse.id}`);
       } else {
@@ -178,7 +184,7 @@ export function Home() {
       }
     } catch (error) {
       console.error("Error fetching verse:", error);
-      toast.error("Failed to load verse");
+      toast.error(error instanceof Error ? error.message : "Failed to load verse");
     }
   };
 

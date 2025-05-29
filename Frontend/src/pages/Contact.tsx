@@ -27,12 +27,21 @@ export function Contact() {
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) throw new Error('Failed to send message');
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 400) {
+          toast.error(data.message || "Please fill in all required fields");
+          return;
+        }
+        throw new Error(data.message || "Failed to send message");
+      }
       
-      toast.success("Message sent successfully!");
+      toast.success(data.message || "Message sent successfully!");
       setFormData({ name: "", email: "", subject: "", message: "" });
     } catch (error) {
-      toast.error("Failed to send message. Please try again.");
+      console.error("Error sending message:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to send message. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
