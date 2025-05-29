@@ -1,22 +1,8 @@
 [
   {
     "id": "94_6",
-<<<<<<< HEAD
-    "mood": [
-      "struggling",
-      "hopeless",
-      "anxious",
-      "overwhelmed",
-      "comfort"
-    ],
-=======
-
-    "mood": ["happy", "comfort", "hope"],
-
     "mood": ["struggling", "hopeless", "anxious", "overwhelmed", "comfort"],
-
->>>>>>> b6f3e98f09a7758e18f56347718c8ca26319f6ba
-    "arabic": "إِنَّ مَعَ الْعُسْرِ يُسْرًا",
+    "arabic": "إِنَّ مَعَ الْعُسْرِ يُسْرًا",
     "english": "Indeed, with hardship [will be] ease.",
     "reference": {
       "surah": 94,
@@ -24,12 +10,7 @@
       "text": "Al-Inshirah (The Relief)"
     },
     "source": "https://quran.com/94/6",
-<<<<<<< HEAD
-    "tags": [
-      "ease",
-      "patience",
-      "encouragement"
-    ],
+    "tags": ["ease", "patience", "encouragement"],
     "translation_info": {
       "translator": "Saheeh International",
       "language": "en",
@@ -42,25 +23,12 @@
       "userId": "user_3c62o2cu9",
       "userName": "Isai Ivanov",
       "timestamp": "2025-05-28T15:06:51.192Z"
-=======
-    "tags": ["ease", "patience", "encouragement"],
-    "translation_info": {
-      "translator": "Saheeh International",
-      "language": "en"
->>>>>>> b6f3e98f09a7758e18f56347718c8ca26319f6ba
     }
   },
   {
     "id": "54_11",
-<<<<<<< HEAD
-    "mood": [
-      "sad",
-      "reflection"
-    ],
-=======
     "mood": ["sad", "reflection"],
->>>>>>> b6f3e98f09a7758e18f56347718c8ca26319f6ba
-    "arabic": "وَفَجَّرْنَا الْأَرْضَ عُيُونًا فَالْتَقَى الْمَاءُ عَلَىٰ مَا أَنشَأَ",
+    "arabic": "وَفَجَّرْنَا الْأَرْضَ عُيُونًا فَالْتَقَى الْمَاءُ عَلَىٰ مَا أَنشَأَ",
     "english": "And We caused springs to gush forth, so the waters met for a matter already predestined.",
     "reference": {
       "surah": 54,
@@ -68,15 +36,7 @@
       "text": "Al-Qamar (The Moon)"
     },
     "source": "https://quran.com/54/11",
-<<<<<<< HEAD
-    "tags": [
-      "miracle",
-      "nature",
-      "destiny"
-    ],
-=======
     "tags": ["miracle", "nature", "destiny"],
->>>>>>> b6f3e98f09a7758e18f56347718c8ca26319f6ba
     "translation_info": {
       "translator": "Saheeh International",
       "language": "en"
@@ -84,15 +44,8 @@
   },
   {
     "id": "2_216",
-<<<<<<< HEAD
-    "mood": [
-      "hopeful",
-      "patience"
-    ],
-=======
     "mood": ["hopeful", "patience"],
->>>>>>> b6f3e98f09a7758e18f56347718c8ca26319f6ba
-    "arabic": "وَعَسَىٰ أَن تَكْرَهُوا شَيْئًا وَهُوَ خَيْرٌ لَّكُمْ",
+    "arabic": "وَعَسَىٰ أَن تَكْرَهُوا شَيْئًا وَهُوَ خَيْرٌ لَّكُمْ",
     "english": "But perhaps you hate a thing and it is good for you.",
     "reference": {
       "surah": 2,
@@ -100,15 +53,7 @@
       "text": "Al-Baqarah (The Cow)"
     },
     "source": "https://quran.com/2/216",
-<<<<<<< HEAD
-    "tags": [
-      "wisdom",
-      "hope",
-      "trust"
-    ],
-=======
     "tags": ["wisdom", "hope", "trust"],
->>>>>>> b6f3e98f09a7758e18f56347718c8ca26319f6ba
     "translation_info": {
       "translator": "Saheeh International",
       "language": "en"
@@ -116,14 +61,7 @@
   },
   {
     "id": "2_152",
-<<<<<<< HEAD
-    "mood": [
-      "grateful",
-      "remembrance"
-    ],
-=======
     "mood": ["grateful", "remembrance"],
->>>>>>> b6f3e98f09a7758e18f56347718c8ca26319f6ba
     "arabic": "فَاذْكُرُونِي أَذْكُرْكُمْ وَاشْكُرُوا لِي وَلَا تَكْفُرُونِ",
     "english": "So remember Me; I will remember you. And be grateful to Me and do not deny Me.",
     "reference": {
@@ -132,15 +70,7 @@
       "text": "Al-Baqarah (The Cow)"
     },
     "source": "https://quran.com/2/152",
-<<<<<<< HEAD
-    "tags": [
-      "gratitude",
-      "remembrance",
-      "faith"
-    ],
-=======
     "tags": ["gratitude", "remembrance", "faith"],
->>>>>>> b6f3e98f09a7758e18f56347718c8ca26319f6ba
     "translation_info": {
       "translator": "Saheeh International",
       "language": "en"
@@ -148,20 +78,10 @@
   },
   {
     "id": "42_19",
-<<<<<<< HEAD
-    "mood": [
-      "hope",
-      "comfort",
-      "reassurance",
-      "gratitude",
-      "trust"
-    ],
-=======
     "mood": ["hope", "comfort", "reassurance", "gratitude", "trust"],
->>>>>>> b6f3e98f09a7758e18f56347718c8ca26319f6ba
-    "arabic": "ٱللَّهُ لَطِيفٌۢ بِعِبَادِهِۦ يَرْزُقُ مَن يَشَآءُ ۖ وَهُوَ ٱلْقَوِىُّ ٱلْعَزِيزُ ١٩",
+    "arabic": "ٱللَّهُ لَطِيفٌۢ بِعِبَادِهِۦ يَرْزُقُ مَن يَشَآءُ ۖ وَهُوَ ٱلْقَوِىُّ ٱلْعَزِيزُ ١٩",
     "english": "Allah is Ever Kind to His servants. He provides ˹abundantly˺ to whoever He wills. And He is the All-Powerful, Almighty.",
-    "bangla": "আল্লাহ তা‘আলা তাঁর বান্দাদের প্রতি দয়াশীল; তিনি যাকে চান রিযিক দান করেন। তিনি প্রবল, পরাক্রমশালী।",
+    "bangla": "আল্লাহ তা'আলা তাঁর বান্দাদের প্রতি দয়াশীল; তিনি যাকে চান রিযিক দান করেন। তিনি প্রবল, পরাক্রমশালী।",
     "reference": {
       "surah": 42,
       "ayah": 19,
@@ -183,22 +103,15 @@
       "bangla_translator": "Gemini AI",
       "language": "multi"
     },
-<<<<<<< HEAD
     "created_at": "2025-05-27T14:35:26.501Z",
     "updated_at": "2025-05-27T16:40:50.449Z"
   },
   {
     "id": "3_7",
-    "mood": [
-      "guidance",
-      "understanding",
-      "caution",
-      "peace",
-      "hope"
-    ],
-    "arabic": "هُوَ ٱلَّذِىٓ أَنزَلَ عَلَيْكَ ٱلْكِتَـٰبَ مِنْهُ ءَايَـٰتٌۭ مُّحْكَمَـٰتٌ هُنَّ أُمُّ ٱلْكِتَـٰبِ وَأُخَرُ مُتَشَـٰبِهَـٰتٌۭ ۖ فَأَمَّا ٱلَّذِينَ فِى قُلُوبِهِمْ زَيْغٌۭ فَيَتَّبِعُونَ مَا تَشَـٰبَهَ مِنْهُ ٱبْتِغَآءَ ٱلْفِتْنَةِ وَٱبْتِغَآءَ تَأْوِيلِهِۦ ۗ وَمَا يَعْلَمُ تَأْوِيلَهُۥٓ إِلَّا ٱللَّهُ ۗ وَٱلرَّٰسِخُونَ فِى ٱلْعِلْمِ يَقُولُونَ ءَامَنَّا بِهِۦ كُلٌّۭ مِّنْ عِندِ رَبِّنَا ۗ وَمَا يَذَّكَّرُ إِلَّآ أُو۟لُوا۟ ٱلْأَلْبَـٰبِ ٧",
-    "english": "He is the One Who has revealed to you ˹O Prophet˺ the Book, of which some verses are precise—they are the foundation of the Book—while others are elusive.1 Those with deviant hearts follow the elusive verses seeking ˹to spread˺ doubt through their ˹false˺ interpretations—but none grasps their ˹full˺ meaning except Allah. As for those well-grounded in knowledge, they say, “We believe in this ˹Quran˺—it is all from our Lord.” But none will be mindful ˹of this˺ except people of reason.",
-    "bangla": "তিনিই সেই সত্তা যিনি আপনার প্রতি কিতাব নাযিল করেছেন। তাতে কিছু আয়াত রয়েছে সুস্পষ্ট, সেগুলো কিতাবের মূল ভিত্তি। আর অন্যান্য আয়াতগুলো রূপক। সুতরাং যাদের অন্তরে বক্রতা রয়েছে, তারা ফিতনা সৃষ্টি করার উদ্দেশ্যে এবং নিজেদের মনগড়া ব্যাখ্যা প্রদানের জন্য রূপক আয়াতগুলোর পেছনে লেগে থাকে। অথচ আল্লাহ ব্যতীত অন্য কেউ এর ব্যাখ্যা জানে না। আর যারা জ্ঞানে পরিপক্ক, তারা বলেঃ আমরা এর প্রতি ঈমান এনেছি। সবকিছুই আমাদের পালনকর্তার পক্ষ থেকে আগত। আর উপদেশ গ্রহণ করে কেবল বুদ্ধিমান লোকেরাই।",
+    "mood": ["guidance", "understanding", "caution", "peace", "hope"],
+    "arabic": "هُوَ ٱلَّذِىٓ أَنزَلَ عَلَيْكَ ٱلْكِتَـٰبَ مِنْهُ ءَايَـٰتٌۭ مُّحْكَمَـٰتٌ هُنَّ أُمُّ ٱلْكِتَـٰبِ وَأُخَرُ مُتَشَـٰبِهَـٰتٌۭ ۖ فَأَمَّا ٱلَّذِينَ فِى قُلُوبِهِمْ زَيْغٌۭ فَيَتَّبِعُونَ مَا تَشَـٰبَهَ مِنْهُ ٱبْتِغَآءَ ٱلْفِتْنَةِ وَٱبْتِغَآءَ تَأْوِيلِهِۦ ۗ وَمَا يَعْلَمُ تَأْوِيلَهُۥٓ إِلَّا ٱللَّهُ ۗ وَٱلرَّٰسِخُونَ فِى ٱلْعِلْمِ يَقُولُونَ ءَامَنَّا بِهِۦ كُلٌّۭ مِّنْ عِندِ رَبِّنَا ۗ وَمَا يَذَّكَّرُ إِلَّآ أُو۟لُوا۟ ٱلْأَلْبَـٰبِ ٧",
+    "english": "He is the One Who has revealed to you ˹O Prophet˺ the Book, of which some verses are precise—they are the foundation of the Book—while others are elusive.1 Those with deviant hearts follow the elusive verses seeking ˹to spread˺ doubt through their ˹false˺ interpretations—but none grasps their ˹full˺ meaning except Allah. As for those well-grounded in knowledge, they say, "We believe in this ˹Quran˺—it is all from our Lord." But none will be mindful ˹of this˺ except people of reason.",
+    "bangla": "তিনিই সেই সত্তা যিনি আপনার প্রতি কিতাব নাযিল করেছেন। তাতে কিছু আয়াত রয়েছে সুস্পষ্ট, সেগুলো কিতাবের মূল ভিত্তি। আর অন্যান্য আয়াতগুলো রূপক। সুতরাং যাদের অন্তরে বক্রতা রয়েছে, তারা ফিতনা সৃষ্টি করার উদ্দেশ্যে এবং নিজেদের মনগড়া ব্যাখ্যা প্রদানের জন্য রূপক আয়াতগুলোর পেছনে লেগে থাকে। অথচ আল্লাহ ব্যতীত অন্য কেউ এর ব্যাখ্যা জানে না। আর যারা জ্ঞানে পরিপক্ক, তারা বলেঃ আমরা এর প্রতি ঈমান এনেছি। সবকিছুই আমাদের পালনকর্তার পক্ষ থেকে আগত। আর উপদেশ গ্রহণ করে কেবল বুদ্ধিমান লোকেরাই।",
     "reference": {
       "surah": 3,
       "ayah": 7,
@@ -227,34 +140,24 @@
     }
   },
   {
+    "id": "2_150",
     "reference": {
       "surah": 2,
       "ayah": 150,
       "text": "Al-Baqarah (The Cow)"
     },
-    "arabic": "وَمِنْ حَيْثُ خَرَجْتَ فَوَلِّ وَجْهَكَ شَطْرَ ٱلْمَسْجِدِ ٱلْحَرَامِ ۚ وَحَيْثُ مَا كُنتُمْ فَوَلُّوا۟ وُجُوهَكُمْ شَطْرَهُۥ لِئَلَّا يَكُونَ لِلنَّاسِ عَلَيْكُمْ حُجَّةٌ إِلَّا ٱلَّذِينَ ظَلَمُوا۟ مِنْهُمْ فَلَا تَخْشَوْهُمْ وَٱخْشَوْنِى وَلِأُتِمَّ نِعْمَتِى عَلَيْكُمْ وَلَعَلَّكُمْ تَهْتَدُونَ ١٥٠",
+    "arabic": "وَمِنْ حَيْثُ خَرَجْتَ فَوَلِّ وَجْهَكَ شَطْرَ ٱلْمَسْجِدِ ٱلْحَرَامِ ۚ وَحَيْثُ مَا كُنتُمْ فَوَلُّوا۟ وُجُوهَكُمْ شَطْرَهُۥ لِئَلَّا يَكُونَ لِلنَّاسِ عَلَيْكُمْ حُجَّةٌ إِلَّا ٱلَّذِينَ ظَلَمُوا۟ مِنْهُمْ فَلَا تَخْشَوْهُمْ وَٱخْشَوْنِى وَلِأُتِمَّ نِعْمَتِى عَلَيْكُمْ وَلَعَلَّكُمْ تَهْتَدُونَ ١٥٠",
     "english": "Wherever you are ˹O Prophet˺, turn your face towards the Sacred Mosque. And wherever you ˹believers˺ are, face towards it, so that people will have no argument against you, except the wrongdoers among them. Do not fear them; fear Me, so that I may ˹continue to˺ perfect My favour upon you and so you may be ˹rightly˺ guided.",
     "bangla": null,
     "context": "Context not provided",
-    "mood": [
-      "Resolute",
-      "Reassured",
-      "Guided"
-    ],
-    "tags": [
-      "Qibla (direction of prayer)",
-      "Divine instruction",
-      "Fear of Allah"
-    ],
+    "mood": ["Resolute", "Reassured", "Guided"],
+    "tags": ["Qibla (direction of prayer)", "Divine instruction", "Fear of Allah"],
     "source": "https://quran.com/2/150",
     "translation_info": {
       "english_translator": "Isai Ivanov",
       "bangla_translator": "Isai Ivanov",
       "language": "multi"
     },
-    "userId": "user_3c62o2cu9",
-    "userName": "Isai Ivanov",
-    "id": "2_150",
     "created_by": {
       "userId": "user_3c62o2cu9",
       "userName": "Isai Ivanov",
@@ -262,8 +165,3 @@
     }
   }
 ]
-=======
-    "created_at": "2025-05-27T14:35:26.501Z"
-  }
-]
->>>>>>> b6f3e98f09a7758e18f56347718c8ca26319f6ba
